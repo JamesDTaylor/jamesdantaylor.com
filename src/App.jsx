@@ -5,11 +5,11 @@ import HomeScene from './components/HomeScene';
 import DossierScene from './components/DossierScene';
 import ArsenalScene from './components/ArsenalScene';
 import TalentTreeScene from './components/TalentTreeScene';
-import NeuralLabScene from './components/NeuralLabScene';
 import RelayScene from './components/RelayScene';
 import CharacterSwirlText from './components/CharacterSwirlText';
 import VortexUpload from './components/VortexUpload';
 import InkCharacterEngine from './components/InkCharacterEngine';
+import FestoonLights from './components/FestoonLights';
 import ParchmentQuillCursor from './components/ParchmentQuillCursor';
 import CommandPalette from './components/CommandPalette';
 import { ArrowRight, ArrowLeft, CheckCircle, RotateCcw } from 'lucide-react';
@@ -27,11 +27,10 @@ const questions = [
 const TOTAL_QUESTIONS = questions.length;
 
 function App() {
-  // Navigation State: 'home' | 'dossier' | 'arsenal' | 'skills' | 'lab' | 1..7 | 'upload' | 'done' | 'relay'
+  // Navigation State: 'home' | 'dossier' | 'arsenal' | 'skills' | 1..7 | 'upload' | 'done' | 'relay'
   const [step, setStep] = useState('home');
   const [currentInput, setCurrentInput] = useState('');
   const [answers, setAnswers] = useState({});
-  const [extraCreatures, setExtraCreatures] = useState(0);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const inputRef = useRef(null);
 
@@ -73,6 +72,17 @@ function App() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [step, isCommandPaletteOpen, saveCurrentAnswer]);
+
+  // Ensure every page transition immediately resets scroll position to the very top
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    const sceneContainer = document.querySelector('.scene-container');
+    if (sceneContainer) sceneContainer.scrollTop = 0;
+    const appRoot = document.querySelector('.app-root');
+    if (appRoot) appRoot.scrollTop = 0;
+  }, [step]);
 
   const goToQuestion = useCallback(
     (targetStep) => {
@@ -129,7 +139,6 @@ function App() {
       case 'dossier':
       case 'arsenal':
       case 'skills':
-      case 'lab':
       case 'relay':
         setStep(actionId);
         break;
@@ -149,10 +158,6 @@ function App() {
     setAnswers({});
     setCurrentInput('');
     setStep('home');
-  };
-
-  const handleSpawnCritter = () => {
-    setExtraCreatures((prev) => Math.min(prev + 1, 6));
   };
 
   // Actions passed to Directory Index
@@ -185,7 +190,10 @@ function App() {
       <ParchmentQuillCursor />
 
       {/* Living 2D Grounded Wanderer Character Engine */}
-      <InkCharacterEngine extraCreaturesCount={extraCreatures} />
+      <InkCharacterEngine />
+
+      {/* Whimsical SVG Festoon Lights Draped Between Trees */}
+      <FestoonLights />
 
       {/* Antique Parchment Background Canvas */}
       <InkParchmentBackground />
@@ -243,15 +251,6 @@ function App() {
               />
             )}
 
-            {step === 'lab' && (
-              <NeuralLabScene
-                key="lab"
-                onBack={goToMenu}
-                onSpawnCritter={handleSpawnCritter}
-                creatureCount={extraCreatures}
-              />
-            )}
-
             {step === 'relay' && (
               <RelayScene
                 key="relay"
@@ -264,8 +263,112 @@ function App() {
               />
             )}
 
+            {/* Centered Guided Question Stage with Integrated Answer Box */}
             {isQuestionStep && (
-              <CharacterSwirlText key={`q-${step}`} text={questions[step - 1].text} />
+              <motion.div
+                key={`question-stage-${step}`}
+                className="guided-question-stage"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96, filter: 'blur(6px)' }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {/* Top Question Header */}
+                <div className="question-stage-top">
+                  <motion.button
+                    type="button"
+                    className="scene-back-btn"
+                    onClick={goToMenu}
+                    whileHover={{ x: -3, scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    aria-label="Return to Overview"
+                  >
+                    <ArrowLeft size={14} /> Exit to Overview
+                  </motion.button>
+                  <span className="question-step-badge">
+                    Chapter IV · Question {step} of {TOTAL_QUESTIONS}
+                  </span>
+                </div>
+
+                {/* Swirling Kinetic Question Text */}
+                <div className="question-text-wrapper">
+                  <CharacterSwirlText key={`q-${step}`} text={questions[step - 1].text} />
+                </div>
+
+                {/* Centered Answer Box & Navigation Controls */}
+                <div className="question-input-wrapper">
+                  <div className="ink-input-row">
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      placeholder="Write your thoughts here..."
+                      value={currentInput}
+                      onChange={(e) => setCurrentInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && currentInput.trim()) handleNextQuestion();
+                        if (e.key === 'Escape') goToMenu();
+                      }}
+                      aria-label={questions[step - 1].text}
+                    />
+                    <AnimatePresence>
+                      {currentInput.trim() && (
+                        <motion.button
+                          type="button"
+                          className="ink-submit-btn"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.8 }}
+                          onClick={handleNextQuestion}
+                          aria-label={step === TOTAL_QUESTIONS ? "Finish questions" : "Next question"}
+                        >
+                          <ArrowRight size={16} />
+                        </motion.button>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Navigation controls directly below input */}
+                  <div className="question-nav-row">
+                    <button
+                      type="button"
+                      className="question-nav-btn"
+                      onClick={handlePrevQuestion}
+                      disabled={step === 1}
+                      aria-label="Previous question"
+                    >
+                      <ArrowLeft size={13} /> Back
+                    </button>
+
+                    <div className="question-dots">
+                      {questions.map((q, idx) => {
+                        const qNum = idx + 1;
+                        const isActive = qNum === step;
+                        const isAnswered = !!answers[q.id]?.trim() || (isActive && currentInput.trim());
+                        return (
+                          <button
+                            key={q.id}
+                            type="button"
+                            className={`question-dot ${isActive ? 'question-dot--active' : ''} ${isAnswered ? 'question-dot--answered' : ''}`}
+                            onClick={() => goToQuestion(qNum)}
+                            aria-label={`Question ${qNum}`}
+                            title={q.text}
+                          />
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      type="button"
+                      className="question-nav-btn"
+                      onClick={handleNextQuestion}
+                      disabled={!currentInput.trim()}
+                      aria-label="Next question"
+                    >
+                      {step === TOTAL_QUESTIONS ? 'Finish' : 'Next'} <ArrowRight size={13} />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
             )}
 
             {step === 'upload' && (
@@ -304,89 +407,6 @@ function App() {
                   </button>
                   <button className="clean-primary-btn" onClick={handleRestart}>
                     <RotateCcw size={14} /> Return to Overview
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Controls row for guided question steps */}
-        <div className="controls-area">
-          <AnimatePresence mode="wait">
-            {isQuestionStep && (
-              <motion.div
-                key={`input-${step}`}
-                className="input-row-wrapper"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35, delay: 0.15 }}
-              >
-                <div className="ink-input-row">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="Write your thoughts here..."
-                    value={currentInput}
-                    onChange={(e) => setCurrentInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && currentInput.trim()) handleNextQuestion();
-                      if (e.key === 'Escape') goToMenu();
-                    }}
-                    aria-label={questions[step - 1].text}
-                  />
-                  <AnimatePresence>
-                    {currentInput.trim() && (
-                      <motion.button
-                        className="ink-submit-btn"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        onClick={handleNextQuestion}
-                        aria-label={step === TOTAL_QUESTIONS ? "Finish questions" : "Next question"}
-                      >
-                        <ArrowRight size={16} />
-                      </motion.button>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                {/* Navigation controls below input */}
-                <div className="question-nav-row">
-                  <button
-                    className="question-nav-btn"
-                    onClick={handlePrevQuestion}
-                    disabled={step === 1}
-                    aria-label="Previous question"
-                  >
-                    <ArrowLeft size={13} /> Back
-                  </button>
-
-                  <div className="question-dots">
-                    {questions.map((q, idx) => {
-                      const qNum = idx + 1;
-                      const isActive = qNum === step;
-                      const isAnswered = !!answers[q.id]?.trim() || (isActive && currentInput.trim());
-                      return (
-                        <button
-                          key={q.id}
-                          className={`question-dot ${isActive ? 'question-dot--active' : ''} ${isAnswered ? 'question-dot--answered' : ''}`}
-                          onClick={() => goToQuestion(qNum)}
-                          aria-label={`Question ${qNum}`}
-                          title={q.text}
-                        />
-                      );
-                    })}
-                  </div>
-
-                  <button
-                    className="question-nav-btn"
-                    onClick={handleNextQuestion}
-                    disabled={!currentInput.trim()}
-                    aria-label="Next question"
-                  >
-                    {step === TOTAL_QUESTIONS ? 'Finish' : 'Next'} <ArrowRight size={13} />
                   </button>
                 </div>
               </motion.div>

@@ -99,8 +99,8 @@ export default function KineticGlyphText({
         const isMoving = Math.abs(phys.x) > 0.1 || Math.abs(phys.y) > 0.1 || Math.abs(phys.z) > 0.1;
         if (isMoving) {
           el.style.transform = `translate3d(${phys.x.toFixed(2)}px, ${phys.y.toFixed(2)}px, ${phys.z.toFixed(2)}px) rotateX(${phys.rotX.toFixed(2)}deg) rotateY(${phys.rotY.toFixed(2)}deg)`;
-          el.style.color = phys.z > 8 ? '#ffffff' : '';
-          el.style.textShadow = phys.z > 8 ? '0 0 16px rgba(56, 189, 248, 0.7)' : '';
+          el.style.color = phys.z > 8 ? '#fef3c7' : '';
+          el.style.textShadow = phys.z > 8 ? '0 0 16px rgba(245, 158, 11, 0.7), 0 0 32px rgba(180, 83, 9, 0.35)' : '';
         } else {
           el.style.transform = '';
           el.style.color = '';

@@ -242,7 +242,7 @@ export default function HomeScene({ onAction }) {
       // Trigger navigation immediately as the card finishes its quick end fade-out
       navigationTimerRef.current = setTimeout(() => {
         triggerNavigation(item);
-      }, 6500);
+      }, 1350);
     },
     [selectedId, triggerNavigation]
   );
@@ -357,8 +357,8 @@ export default function HomeScene({ onAction }) {
                       filter: ['blur(0px)', 'blur(0px)', 'blur(0px)', 'blur(4px)'],
                       zIndex: 100,
                       transition: {
-                        duration: 6.5,
-                        times: [0, 0.08, 0.975, 1], // Fades out quickly in the last ~160ms
+                        duration: 1.35,
+                        times: [0, 0.25, 0.88, 1], // Fades out smoothly at end of drift
                         ease: [0.16, 1, 0.3, 1],
                       },
                     }

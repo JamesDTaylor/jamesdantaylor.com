@@ -2564,3 +2564,152 @@ html, body, #root, .app-root {
   }
 }
 
+/* ============================================ */
+/*        COMPREHENSIVE MOBILE OPTIMIZATIONS    */
+/* ============================================ */
+
+/* Touch-specific optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Restore native touch cursor behavior */
+  html, body, #root, .app-root, *, *::before, *::after, button, a, input, textarea, select, [role="button"], [role="menuitem"] {
+    cursor: auto !important;
+  }
+
+  /* Optimize touch delays and taps */
+  button, a, input, textarea, select, [role="button"], [role="menuitem"], .parchment-portal-card, .filter-chip, .talent-tab {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Hide custom calligraphy quill canvas on touch devices */
+  .parchment-quill-canvas {
+    display: none !important;
+  }
+}
+
+/* Mobile & Tablet Viewport Adaptations (< 768px) */
+@media (max-width: 768px) {
+  html, body, #root, .app-root {
+    height: 100dvh;
+    min-height: -webkit-fill-available;
+  }
+
+  .scene-container {
+    height: 100dvh;
+  }
+
+  .question-area {
+    padding: 4.2rem 1.0rem 4.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Compact Floating Header */
+  .map-header {
+    top: 0.6rem;
+    width: min(96%, 680px);
+    padding: 0.45rem 0.85rem;
+  }
+
+  .header-brand-text {
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+  }
+
+  .header-status-badge {
+    display: none; /* Hide secondary badge on mobile to save space */
+  }
+
+  .map-kbd-chip {
+    display: none; /* Hide keyboard shortcut hints on touch screens */
+  }
+
+  .map-index-btn {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.68rem;
+  }
+
+  /* Home Scene Title & Subtitle */
+  .parchment-hero-block {
+    margin-bottom: 1.4rem;
+  }
+
+  .parchment-hero-title {
+    font-size: clamp(2.2rem, 7.5vw, 3.2rem);
+    letter-spacing: 0.05em;
+  }
+
+  /* Portal Cards */
+  .parchment-portal-card {
+    padding: 1.4rem 1.2rem 1.1rem;
+    min-height: 160px;
+  }
+
+  .portal-card-desc {
+    font-size: 0.96rem;
+    line-height: 1.5;
+  }
+
+  /* Input fields: prevent iOS automatic zoom */
+  input, textarea, select, .relay-input, .relay-textarea, .quest-input {
+    font-size: 16px !important;
+  }
+
+  /* Horizontal Filter Chips on Arsenal and Skills */
+  .arsenal-filter-bar, .talent-category-tabs {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    gap: 0.5rem;
+    scrollbar-width: none;
+  }
+
+  .arsenal-filter-bar::-webkit-scrollbar, .talent-category-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Command Palette Modal on Mobile */
+  .command-palette-backdrop {
+    padding: 0.8rem;
+    align-items: flex-start;
+    padding-top: 3.5rem;
+  }
+
+  .command-palette-dialog {
+    width: 100% !important;
+    max-height: 82dvh !important;
+  }
+
+  /* Mobile footer banner */
+  .map-footer {
+    bottom: 0.25rem;
+    font-size: 0.70rem;
+    padding: 0.2rem 0.75rem;
+  }
+}
+
+/* Extra Small Phones (< 480px) */
+@media (max-width: 480px) {
+  .question-area {
+    padding: 3.8rem 0.75rem 4.0rem;
+  }
+
+  .parchment-hero-title {
+    font-size: clamp(1.9rem, 8.5vw, 2.6rem);
+  }
+
+  .parchment-portal-card {
+    padding: 1.2rem 1.0rem 1.0rem;
+  }
+
+  .portal-card-title {
+    font-size: 1.15rem;
+  }
+
+  .portal-card-desc {
+    font-size: 0.90rem;
+  }
+}
+
+

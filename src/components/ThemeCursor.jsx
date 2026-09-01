@@ -1,47 +1,84 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 /**
- * Cartographer's Navigation Pointer Cursor
+ * Pure Cartographer Cursor & Buzzing Flies
  * 
- * An unmistakable, classic directional cursor arrow crafted in the
- * Marauder's Map & Antique Parchment art style:
- * - Unambiguous pointer arrow silhouette with contact apex precisely at (0, 0)
- * - Chiseled cartographic compass facets: gilded parchment brass & shaded walnut bronze
- * - Embedded miniature vermilion compass star / wax seal jewel
- * - Fine calligraphy ink contour for high contrast across parchment & cards
- * - Soft lantern motes & ink ripples on interaction
+ * Clean, uncluttered directional pointer arrow in theme-matched parchment & ink palette,
+ * with organic buzzing midges / flies swarm trailing the cursor.
+ * Exposes fly registry for interactive predation by the ground frog character.
  */
 
-const MAX_PARTICLES = 25;
-const MAX_RIPPLES = 3;
+const FLY_COUNT = 4;
+
+function createFlies(startX = 0, startY = 0) {
+  return Array.from({ length: FLY_COUNT }, (_, i) => ({
+    id: `fly_${Date.now()}_${i}_${Math.random()}`,
+    x: startX + (Math.random() - 0.5) * 20,
+    y: startY - 8 + (Math.random() - 0.5) * 15,
+    vx: (Math.random() - 0.5) * 2,
+    vy: (Math.random() - 0.5) * 2,
+    angle: (i * (Math.PI * 2)) / FLY_COUNT,
+    orbitRadiusX: 8 + Math.random() * 6,
+    orbitRadiusY: 4.5 + Math.random() * 4.5,
+    speed: 0.038 + Math.random() * 0.025,
+    direction: Math.random() > 0.5 ? 1 : -1,
+    heightOffset: -6 - Math.random() * 6,
+    lagFactor: 0.018 + Math.random() * 0.014, // Individual reaction delay
+    dartTimer: Math.floor(Math.random() * 30),
+    dartVx: 0,
+    dartVy: 0,
+    wingPhase: Math.random() * 10,
+    eaten: false,
+  }));
+}
 
 export default function ThemeCursor() {
   const [isDesktop, setIsDesktop] = useState(
     typeof window !== 'undefined' ? window.innerWidth >= 768 : true
   );
   const [isHovered, setIsHovered] = useState(false);
-  const [isCardHovered, setIsCardHovered] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [hasMoved, setHasMoved] = useState(false);
 
   const cursorRootRef = useRef(null);
   const canvasRef = useRef(null);
-
-  const particlesRef = useRef([]);
-  const ripplesRef = useRef([]);
+  const fliesRef = useRef(createFlies());
+  const respawnTimerRef = useRef(0);
 
   const physicsRef = useRef({
     x: -9999,
     y: -9999,
     lastX: -9999,
     lastY: -9999,
+    swarmX: -9999,
+    swarmY: -9999,
     lastTime: performance.now(),
     vx: 0,
     vy: 0,
     smoothVx: 0,
     smoothVy: 0,
     speed: 0,
+    initialized: false,
   });
+
+  // Expose global fly eating function for the frog character
+  useEffect(() => {
+    window.__cursorFlies = fliesRef.current;
+    window.__eatCursorFly = (flyId) => {
+      const idx = fliesRef.current.findIndex((f) => f.id === flyId);
+      if (idx !== -1) {
+        fliesRef.current.splice(idx, 1);
+        window.__cursorFlies = fliesRef.current;
+        return true;
+      }
+      return false;
+    };
+
+    return () => {
+      window.__cursorFlies = [];
+      window.__eatCursorFly = null;
+    };
+  }, []);
 
   // Track pointer movements with zero latency
   useEffect(() => {
@@ -67,41 +104,27 @@ export default function ThemeCursor() {
 
       if (!hasMoved) setHasMoved(true);
 
+      // On initial start, seed swarm near cursor
+      if (!p.initialized) {
+        p.initialized = true;
+        p.swarmX = clientX;
+        p.swarmY = clientY - 8;
+        fliesRef.current.forEach((fly) => {
+          fly.x = clientX + (Math.random() - 0.5) * 12;
+          fly.y = clientY - 8 + (Math.random() - 0.5) * 8;
+        });
+        window.__cursorFlies = fliesRef.current;
+      }
+
       if (cursorRootRef.current) {
         cursorRootRef.current.style.opacity = '1';
         cursorRootRef.current.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
       }
 
-      // Delicate ambient lantern motes on brisk motion
-      const dist = Math.hypot(dx, dy);
-      if (dist > 5 && particlesRef.current.length < MAX_PARTICLES) {
-        const themeColors = [
-          'rgba(245, 158, 11, 0.85)',  // Warm lantern amber
-          'rgba(217, 119, 6, 0.80)',   // Gilded gold
-          'rgba(139, 30, 30, 0.75)',   // Vermilion seal red
-          'rgba(90, 56, 37, 0.75)',    // Walnut ink
-        ];
-        particlesRef.current.push({
-          x: clientX + (Math.random() - 0.5) * 3,
-          y: clientY + (Math.random() - 0.5) * 3,
-          vx: -p.vx * 0.08 + (Math.random() - 0.5) * 0.8,
-          vy: -p.vy * 0.08 + (Math.random() - 0.5) * 0.8 - 0.2,
-          size: 1.2 + Math.random() * 1.8,
-          alpha: 0.8,
-          decay: 0.04 + Math.random() * 0.03,
-          color: themeColors[Math.floor(Math.random() * themeColors.length)],
-        });
-      }
-
-      // Target hover detection
+      // Interactive hover detection
       const target = e.target;
-      const cardEl = target && target.closest
-        ? target.closest('.parchment-portal-card, .dossier-letter-card, .chronicle-card, .talent-tree-container, .relay-envelope-card')
-        : null;
-      setIsCardHovered(!!cardEl);
-
       const interactiveEl = target && target.closest
-        ? target.closest('button, a, input, textarea, select, .parchment-portal-card, .clean-primary-btn, .clean-secondary-btn, .scene-back-btn, [role="button"], [role="menuitem"], .question-dot, .map-index-btn, .header-tool-btn, .cmd-item-row')
+        ? target.closest('button, a, input, textarea, select, .parchment-portal-card, .clean-primary-btn, .clean-secondary-btn, .scene-back-btn, [role="button"], [role="menuitem"], .question-dot, .map-index-btn, .header-tool-btn, .cmd-item-row, .dossier-letter-card, .chronicle-card, .talent-tree-container, .relay-envelope-card')
         : null;
       setIsHovered(!!interactiveEl);
     };
@@ -110,33 +133,11 @@ export default function ThemeCursor() {
       if (e.pointerType === 'touch' || window.innerWidth < 768) return;
       setIsClicking(true);
 
-      // Ink ripple pulse at click position
-      if (ripplesRef.current.length < MAX_RIPPLES) {
-        ripplesRef.current.push({
-          x: e.clientX,
-          y: e.clientY,
-          radius: 2,
-          maxRadius: 16,
-          alpha: 0.65,
-          color: '#8b1e1e',
-        });
-      }
-
-      // Small burst of 6 fine lantern sparks
-      for (let i = 0; i < 6; i++) {
-        const angle = (i * Math.PI * 2) / 6 + (Math.random() - 0.5) * 0.3;
-        const spd = 1.3 + Math.random() * 1.8;
-        particlesRef.current.push({
-          x: e.clientX,
-          y: e.clientY,
-          vx: Math.cos(angle) * spd,
-          vy: Math.sin(angle) * spd,
-          size: 1.4 + Math.random() * 1.6,
-          alpha: 0.95,
-          decay: 0.05 + Math.random() * 0.03,
-          color: i % 2 === 0 ? 'rgba(245, 158, 11, 0.9)' : 'rgba(139, 30, 30, 0.85)',
-        });
-      }
+      // Momentarily scatter buzzing flies outwards on click
+      fliesRef.current.forEach((fly) => {
+        fly.dartVx = (Math.random() - 0.5) * 4;
+        fly.dartVy = -1.5 - Math.random() * 2.5;
+      });
     };
 
     const handleMouseUp = () => setIsClicking(false);
@@ -154,7 +155,7 @@ export default function ThemeCursor() {
     };
   }, [hasMoved]);
 
-  // Canvas animation loop for particles & ripples
+  // Canvas animation loop for buzzing flies midges
   useEffect(() => {
     if (!isDesktop) return;
 
@@ -178,59 +179,95 @@ export default function ThemeCursor() {
 
     const tick = () => {
       const p = physicsRef.current;
+      if (!p.initialized || p.x === -9999) {
+        animId = requestAnimationFrame(tick);
+        return;
+      }
+
       p.smoothVx += (p.vx - p.smoothVx) * 0.22;
       p.smoothVy += (p.vy - p.smoothVy) * 0.22;
+      p.speed = Math.hypot(p.smoothVx, p.smoothVy);
       p.vx *= 0.82;
       p.vy *= 0.82;
+
+      // Organic swarm center tracking
+      const targetApexX = p.x;
+      const targetApexY = p.y - 8;
+
+      p.swarmX += (targetApexX - p.swarmX) * 0.018;
+      p.swarmY += (targetApexY - p.swarmY) * 0.018;
+
+      // Only spawn more flies once he eats them all
+      if (fliesRef.current.length === 0) {
+        respawnTimerRef.current += 0.016;
+        if (respawnTimerRef.current >= 2.5) {
+          fliesRef.current = createFlies(p.x, p.y);
+          window.__cursorFlies = fliesRef.current;
+          respawnTimerRef.current = 0;
+        }
+      } else {
+        respawnTimerRef.current = 0;
+      }
+
+      // Synchronize flies array for frog tracking
+      window.__cursorFlies = fliesRef.current;
 
       if (ctx && canvas) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Render ripples
-        for (let i = ripplesRef.current.length - 1; i >= 0; i--) {
-          const r = ripplesRef.current[i];
-          r.radius += 0.8;
-          r.alpha -= 0.04;
+        fliesRef.current.forEach((fly) => {
+          if (fly.eaten) return;
 
-          if (r.alpha <= 0 || r.radius >= r.maxRadius) {
-            ripplesRef.current.splice(i, 1);
-            continue;
+          fly.angle += fly.speed * fly.direction * (1 + p.speed * 0.04);
+          fly.wingPhase += 0.48;
+
+          const orbitX = p.swarmX + Math.cos(fly.angle) * fly.orbitRadiusX + Math.sin(fly.angle * 2) * 2.5;
+          const orbitY = p.swarmY + fly.heightOffset + Math.sin(fly.angle) * fly.orbitRadiusY + Math.cos(fly.angle * 1.5) * 1.5;
+
+          const ax = (orbitX - fly.x) * fly.lagFactor;
+          const ay = (orbitY - fly.y) * fly.lagFactor;
+
+          fly.dartTimer--;
+          if (fly.dartTimer <= 0) {
+            fly.dartTimer = 18 + Math.floor(Math.random() * 26);
+            fly.dartVx = (Math.random() - 0.5) * 2.2;
+            fly.dartVy = (Math.random() - 0.5) * 1.8;
+            if (Math.random() < 0.2) fly.direction *= -1;
+          } else {
+            fly.dartVx *= 0.82;
+            fly.dartVy *= 0.82;
           }
 
-          ctx.save();
-          ctx.strokeStyle = r.color;
-          ctx.globalAlpha = Math.max(0, r.alpha);
-          ctx.lineWidth = 1.1;
-          ctx.beginPath();
-          ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.restore();
-        }
+          fly.vx = (fly.vx + ax + fly.dartVx) * 0.86;
+          fly.vy = (fly.vy + ay + fly.dartVy) * 0.86;
+          fly.x += fly.vx;
+          fly.y += fly.vy;
 
-        // Render particles
-        for (let i = particlesRef.current.length - 1; i >= 0; i--) {
-          const sp = particlesRef.current[i];
-          sp.x += sp.vx;
-          sp.y += sp.vy;
-          sp.vx *= 0.93;
-          sp.vy *= 0.93;
-          sp.alpha -= sp.decay;
-
-          if (sp.alpha <= 0) {
-            particlesRef.current.splice(i, 1);
-            continue;
-          }
+          const isWingsUp = Math.sin(fly.wingPhase) > 0;
 
           ctx.save();
-          ctx.globalAlpha = Math.max(0, sp.alpha);
-          ctx.fillStyle = sp.color;
-          ctx.shadowColor = sp.color;
-          ctx.shadowBlur = 3;
+          ctx.translate(fly.x, fly.y);
+
+          // Fly ink body
+          ctx.fillStyle = '#1a0f0a';
           ctx.beginPath();
-          ctx.arc(sp.x, sp.y, sp.size * (sp.alpha * 0.8 + 0.2), 0, Math.PI * 2);
+          ctx.ellipse(0, 0, 1.1, 0.7, fly.angle, 0, Math.PI * 2);
           ctx.fill();
+
+          // High-frequency buzzing translucent wings
+          ctx.fillStyle = 'rgba(70, 50, 35, 0.45)';
+          ctx.beginPath();
+          if (isWingsUp) {
+            ctx.ellipse(-0.3, -1.0, 1.0, 0.45, -Math.PI / 4, 0, Math.PI * 2);
+            ctx.ellipse(0.3, -1.0, 1.0, 0.45, Math.PI / 4, 0, Math.PI * 2);
+          } else {
+            ctx.ellipse(-0.6, -0.5, 1.1, 0.4, -Math.PI / 8, 0, Math.PI * 2);
+            ctx.ellipse(0.6, -0.5, 1.1, 0.4, Math.PI / 8, 0, Math.PI * 2);
+          }
+          ctx.fill();
+
           ctx.restore();
-        }
+        });
       }
 
       animId = requestAnimationFrame(tick);
@@ -247,10 +284,10 @@ export default function ThemeCursor() {
 
   return (
     <>
-      {/* Ambient Lantern & Ink Sparks Canvas */}
+      {/* Living Buzzing Midges Flies Swarm Canvas */}
       <canvas
         ref={canvasRef}
-        className="cartographer-ink-canvas"
+        className="cartographer-ink-canvas quill-flies-canvas"
         style={{
           position: 'fixed',
           inset: 0,
@@ -260,7 +297,7 @@ export default function ThemeCursor() {
         }}
       />
 
-      {/* Cartographer's Navigation Pointer Arrow */}
+      {/* Pure, Clean Cursor Pointer Arrow */}
       <div
         ref={cursorRootRef}
         className="cartographer-cursor-root"
@@ -283,10 +320,10 @@ export default function ThemeCursor() {
             top: 0,
             left: 0,
             transformOrigin: '0px 0px',
-            transform: `scale(${isClicking ? 0.92 : isHovered ? 1.10 : 1.0})`,
+            transform: `scale(${isClicking ? 0.92 : isHovered ? 1.08 : 1.0})`,
             transition: 'transform 0.12s cubic-bezier(0.16, 1, 0.3, 1)',
             filter: isHovered
-              ? 'drop-shadow(0 0 6px rgba(180, 83, 9, 0.8)) drop-shadow(0 2px 4px rgba(26, 15, 10, 0.45))'
+              ? 'drop-shadow(0 0 6px rgba(180, 83, 9, 0.75)) drop-shadow(0 2px 4px rgba(26, 15, 10, 0.4))'
               : 'drop-shadow(0 2px 4px rgba(26, 15, 10, 0.35))',
           }}
         >
@@ -314,17 +351,9 @@ export default function ThemeCursor() {
                 <stop offset="85%" stopColor="#4a2c13" />
                 <stop offset="100%" stopColor="#241308" />
               </linearGradient>
-
-              {/* Wax Seal Vermilion Red Jewel Gradient */}
-              <radialGradient id="navSealGem" cx="35%" cy="35%" r="65%">
-                <stop offset="0%" stopColor="#fca5a5" />
-                <stop offset="35%" stopColor="#dc2626" />
-                <stop offset="75%" stopColor="#8b1e1e" />
-                <stop offset="100%" stopColor="#450a0a" />
-              </radialGradient>
             </defs>
 
-            {/* ── 1. Calligraphy Ink Silhouette Shadow Outline (Unmistakable Arrow Silhouette) ── */}
+            {/* ── 1. Calligraphy Ink Silhouette Shadow Outline ── */}
             <path
               d="M 0 0 
                  L 0 19.5 
@@ -365,7 +394,7 @@ export default function ThemeCursor() {
               fill="url(#navGoldFacet)"
             />
 
-            {/* ── 4. Chiseled Center Blade Ridge Line (Warm Ivory Reflection) ── */}
+            {/* ── 4. Chiseled Center Ridge Line ── */}
             <line
               x1="0"
               y1="0"
@@ -386,30 +415,6 @@ export default function ThemeCursor() {
               stroke="#ecd599"
               strokeWidth="0.55"
               strokeLinecap="round"
-            />
-
-            {/* ── 6. Cartographer's Navigation Compass Star / Seal Gem at (5.5, 9.5) ── */}
-            <g transform="translate(5.5, 9.5)">
-              {/* Gold Compass Star Diamond */}
-              <path
-                d="M 0 -3.2 L 1.2 -1 L 3.2 0 L 1.2 1 L 0 3.2 L -1.2 1 L -3.2 0 L -1.2 -1 Z"
-                fill="#ecd599"
-                stroke="#1a0f0a"
-                strokeWidth="0.35"
-              />
-              {/* Center Vermilion Wax Core */}
-              <circle cx="0" cy="0" r="1.3" fill="url(#navSealGem)" stroke="#1a0f0a" strokeWidth="0.3" />
-              <circle cx="-0.35" cy="-0.35" r="0.35" fill="#ffffff" />
-            </g>
-
-            {/* ── 7. Fine Contact Tip Point at (0, 0) ── */}
-            <circle
-              cx="0"
-              cy="0"
-              r="0.8"
-              fill="#fffdf4"
-              stroke="#140b07"
-              strokeWidth="0.3"
             />
           </svg>
         </div>

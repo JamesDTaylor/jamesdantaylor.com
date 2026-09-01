@@ -14,6 +14,8 @@ import ThemeCursor from './components/ThemeCursor';
 import CommandPalette from './components/CommandPalette';
 import { ArrowRight, ArrowLeft, CheckCircle, RotateCcw } from 'lucide-react';
 
+import ThemeToggle from './components/ThemeToggle';
+
 const questions = [
   { id: 'concept', text: "Tell me a bit about the digital health product or research project you have in mind." },
   { id: 'audience', text: "Who are the people or patient cohorts this is being built for?" },
@@ -32,7 +34,28 @@ function App() {
   const [currentInput, setCurrentInput] = useState('');
   const [answers, setAnswers] = useState({});
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    try {
+      const saved = localStorage.getItem('james_theme');
+      if (saved) return saved === 'dark';
+      return typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch {
+      return false;
+    }
+  });
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('james_theme', isDark ? 'dark' : 'light');
+    } catch {}
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
 
   const isQuestionStep = typeof step === 'number' && step >= 1 && step <= TOTAL_QUESTIONS;
 
@@ -59,12 +82,20 @@ function App() {
     }
   }, [isQuestionStep, step, currentInput]);
 
-  // Global Keyboard shortcuts: ESC to Overview, Cmd+K / Ctrl+K for Directory Index
+  // Global Keyboard shortcuts: ESC to Overview, Cmd+K / Ctrl+K for Directory Index, 'T' for Theme Toggle
   useEffect(() => {
     const handleKeyDown = (e) => {
+      const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
+
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setIsCommandPaletteOpen((prev) => !prev);
+        return;
+      }
+
+      if ((e.key === 't' || e.key === 'T') && !isTyping && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        setIsDark((prev) => !prev);
         return;
       }
 
@@ -219,18 +250,21 @@ function App() {
   };
 
   return (
-    <div className="app-root">
+    <div className={`app-root ${isDark ? 'dark' : ''}`} data-theme={isDark ? 'dark' : 'day'}>
       {/* Cartographer's Navigation Compass Pointer Cursor */}
       <ThemeCursor />
 
       {/* Living 2D Grounded Wanderer Character Engine */}
-      <InkCharacterEngine />
+      <InkCharacterEngine isDark={isDark} />
 
       {/* Whimsical SVG Festoon Lights Draped Between Trees */}
-      <FestoonLights />
+      <FestoonLights isDark={isDark} />
 
       {/* Antique Parchment Background Canvas */}
-      <InkParchmentBackground />
+      <InkParchmentBackground isDark={isDark} />
+
+      {/* Floating Astrolabe Theme Switcher (Daybreak / Nocturne) */}
+      <ThemeToggle isDark={isDark} onToggle={() => setIsDark((prev) => !prev)} />
 
       {/* Directory Index / Command Palette */}
       <CommandPalette

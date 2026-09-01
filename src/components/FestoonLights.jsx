@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
  * Positioned high so the bulbs remain safely above the "JAMES TAYLOR" title header.
  */
 
-export default function FestoonLights() {
+export default function FestoonLights({ isDark = false }) {
   const [dimensions, setDimensions] = useState({
     width: typeof window !== 'undefined' ? window.innerWidth : 1200,
     height: typeof window !== 'undefined' ? window.innerHeight : 800,

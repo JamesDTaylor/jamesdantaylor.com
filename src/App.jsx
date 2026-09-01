@@ -10,7 +10,7 @@ import CharacterSwirlText from './components/CharacterSwirlText';
 import DocumentUpload from './components/DocumentUpload';
 import InkCharacterEngine from './components/InkCharacterEngine';
 import FestoonLights from './components/FestoonLights';
-import CartographerQuillCursor from './components/CartographerQuillCursor';
+import ThemeCursor from './components/ThemeCursor';
 import CommandPalette from './components/CommandPalette';
 import { ArrowRight, ArrowLeft, CheckCircle, RotateCcw } from 'lucide-react';
 
@@ -220,8 +220,8 @@ function App() {
 
   return (
     <div className="app-root">
-      {/* Antique Cartographer's Ink Nib & Stardust Cursor */}
-      <CartographerQuillCursor />
+      {/* Cartographer's Navigation Compass Pointer Cursor */}
+      <ThemeCursor />
 
       {/* Living 2D Grounded Wanderer Character Engine */}
       <InkCharacterEngine />

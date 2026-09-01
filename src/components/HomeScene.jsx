@@ -239,10 +239,10 @@ export default function HomeScene({ onAction }) {
 
       setSelectedId(item.id);
 
-      // Trigger navigation immediately as the card finishes its quick end fade-out
+      // Trigger navigation after 5 seconds as the card finishes its display and fade-out
       navigationTimerRef.current = setTimeout(() => {
         triggerNavigation(item);
-      }, 1350);
+      }, 5000);
     },
     [selectedId, triggerNavigation]
   );
@@ -348,17 +348,17 @@ export default function HomeScene({ onAction }) {
               animate={
                 isSelected
                   ? {
-                      // Drift to center (0.5s), pause for comfortable reading, then quick crisp fade-out at the very end
+                      // Drift smoothly to center (~0.45s), rest in middle for 5 seconds total, then fade out at the very end
                       x: [0, centerOffset.x, centerOffset.x, centerOffset.x],
-                      y: [0, centerOffset.y, centerOffset.y - 6, centerOffset.y],
-                      scale: [1, 1.16, 1.18, 1.20],
-                      rotateZ: [0, -0.6, 0, 0],
+                      y: [0, centerOffset.y, centerOffset.y - 4, centerOffset.y],
+                      scale: [1, 1.18, 1.20, 1.22],
+                      rotateZ: [0, -0.4, 0, 0],
                       opacity: [1, 1, 1, 0],
                       filter: ['blur(0px)', 'blur(0px)', 'blur(0px)', 'blur(4px)'],
                       zIndex: 100,
                       transition: {
-                        duration: 1.35,
-                        times: [0, 0.25, 0.88, 1], // Fades out smoothly at end of drift
+                        duration: 5.0,
+                        times: [0, 0.09, 0.92, 1], // Drifts to center by ~0.45s, holds until 4.6s, fades out by 5.0s
                         ease: [0.16, 1, 0.3, 1],
                       },
                     }

@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import InkParchmentBackground from './components/InkParchmentBackground';
 import HomeScene from './components/HomeScene';
-import DossierScene from './components/DossierScene';
-import ArsenalScene from './components/ArsenalScene';
-import TalentTreeScene from './components/TalentTreeScene';
-import RelayScene from './components/RelayScene';
+import SummaryScene from './components/SummaryScene';
+import ExperienceScene from './components/ExperienceScene';
+import EducationScene from './components/EducationScene';
+import ContactScene from './components/ContactScene';
 import CharacterSwirlText from './components/CharacterSwirlText';
-import VortexUpload from './components/VortexUpload';
+import DocumentUpload from './components/DocumentUpload';
 import InkCharacterEngine from './components/InkCharacterEngine';
 import FestoonLights from './components/FestoonLights';
 import ParchmentQuillCursor from './components/ParchmentQuillCursor';
@@ -27,7 +27,7 @@ const questions = [
 const TOTAL_QUESTIONS = questions.length;
 
 function App() {
-  // Navigation State: 'home' | 'dossier' | 'arsenal' | 'skills' | 1..7 | 'upload' | 'done' | 'relay'
+  // Navigation State: 'home' | 'summary' | 'experience' | 'education' | 1..7 | 'upload' | 'done' | 'contact'
   const [step, setStep] = useState('home');
   const [currentInput, setCurrentInput] = useState('');
   const [answers, setAnswers] = useState({});
@@ -136,12 +136,29 @@ function App() {
 
   const handleMenuAction = (actionId, payload) => {
     switch (actionId) {
+      case 'summary':
       case 'dossier':
-      case 'arsenal':
-      case 'skills':
-      case 'relay':
-        setStep(actionId);
+        setStep('summary');
         break;
+      case 'experience':
+      case 'arsenal':
+        setStep('experience');
+        break;
+      case 'education':
+      case 'skills':
+        setStep('education');
+        break;
+      case 'contact':
+      case 'relay':
+        setStep('contact');
+        break;
+      case 'collaborate':
+      case 'quest': {
+        const firstQId = questions[0].id;
+        setCurrentInput(answers[firstQId] || '');
+        setStep(1);
+        break;
+      }
       case 'selectQuestion': {
         const qNum = payload || 1;
         const targetQId = questions[qNum - 1].id;
@@ -164,10 +181,18 @@ function App() {
   const navigationActions = {
     goToSection: (sec) => {
       saveCurrentAnswer();
-      if (sec === 'quest') {
+      if (sec === 'collaborate' || sec === 'quest') {
         const firstQId = questions[0].id;
         setCurrentInput(answers[firstQId] || '');
         setStep(1);
+      } else if (sec === 'dossier') {
+        setStep('summary');
+      } else if (sec === 'arsenal') {
+        setStep('experience');
+      } else if (sec === 'skills') {
+        setStep('education');
+      } else if (sec === 'relay') {
+        setStep('contact');
       } else {
         setStep(sec);
       }
@@ -216,44 +241,44 @@ function App() {
               />
             )}
 
-            {step === 'dossier' && (
-              <DossierScene
-                key="dossier"
+            {(step === 'summary' || step === 'dossier') && (
+              <SummaryScene
+                key="summary"
                 onBack={goToMenu}
-                onStartQuest={() => {
+                onStartCollaborate={() => {
                   const firstQId = questions[0].id;
                   setCurrentInput(answers[firstQId] || '');
                   setStep(1);
                 }}
-                onInspectArsenal={() => setStep('arsenal')}
+                onInspectExperience={() => setStep('experience')}
               />
             )}
 
-            {step === 'arsenal' && (
-              <ArsenalScene
-                key="arsenal"
+            {(step === 'experience' || step === 'arsenal') && (
+              <ExperienceScene
+                key="experience"
                 onBack={goToMenu}
-                onStartBriefWithProject={(projectName) => {
-                  setCurrentInput(`I'd love to collaborate on a project inspired by ${projectName}...`);
+                onStartBriefWithExperience={(expTitle) => {
+                  setCurrentInput(`I'd love to collaborate on a project inspired by ${expTitle}...`);
                   setStep(1);
                 }}
               />
             )}
 
-            {step === 'skills' && (
-              <TalentTreeScene
-                key="skills"
+            {(step === 'education' || step === 'skills') && (
+              <EducationScene
+                key="education"
                 onBack={goToMenu}
-                onStartBriefWithTalents={(talentName) => {
-                  setCurrentInput(`I'd like to explore working together on ${talentName}...`);
+                onStartBriefWithEducation={(eduTitle) => {
+                  setCurrentInput(`I'd like to explore working together on ${eduTitle}...`);
                   setStep(1);
                 }}
               />
             )}
 
-            {step === 'relay' && (
-              <RelayScene
-                key="relay"
+            {(step === 'contact' || step === 'relay') && (
+              <ContactScene
+                key="contact"
                 onBack={goToMenu}
                 onStartBrief={() => {
                   const firstQId = questions[0].id;
@@ -263,58 +288,54 @@ function App() {
               />
             )}
 
-            {/* Centered Guided Question Stage with Integrated Answer Box */}
             {isQuestionStep && (
               <motion.div
-                key={`question-stage-${step}`}
-                className="guided-question-stage"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96, filter: 'blur(6px)' }}
+                key={`question-${step}`}
+                className="question-card"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -16, filter: 'blur(8px)' }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               >
-                {/* Top Question Header */}
-                <div className="question-stage-top">
-                  <motion.button
-                    type="button"
-                    className="scene-back-btn"
-                    onClick={goToMenu}
-                    whileHover={{ x: -3, scale: 1.02 }}
-                    whileTap={{ scale: 0.97 }}
-                    aria-label="Return to Overview"
-                  >
-                    <ArrowLeft size={14} /> Exit to Overview
-                  </motion.button>
-                  <span className="question-step-badge">
-                    Chapter IV · Question {step} of {TOTAL_QUESTIONS}
+                {/* Floating Top Inscription Header */}
+                <div className="question-top-bar">
+                  <span className="quest-tag">Chapter IV · Project & Research Collaboration</span>
+                  <span className="question-counter-badge">
+                    Inquiry {step} of {TOTAL_QUESTIONS}
                   </span>
                 </div>
 
-                {/* Swirling Kinetic Question Text */}
-                <div className="question-text-wrapper">
-                  <CharacterSwirlText key={`q-${step}`} text={questions[step - 1].text} />
+                {/* Question Heading with Swirl Effect */}
+                <div className="question-title-wrapper">
+                  <CharacterSwirlText
+                    text={questions[step - 1].text}
+                    className="question-text"
+                  />
                 </div>
 
-                {/* Centered Answer Box & Navigation Controls */}
-                <div className="question-input-wrapper">
-                  <div className="ink-input-row">
-                    <input
+                {/* User Input Area */}
+                <div className="quest-form-body">
+                  <div className="quest-input-wrapper">
+                    <textarea
                       ref={inputRef}
-                      type="text"
-                      placeholder="Write your thoughts here..."
+                      className="quest-textarea"
+                      placeholder="Inscribe your thoughts, clinical objectives, or project notes..."
                       value={currentInput}
                       onChange={(e) => setCurrentInput(e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter' && currentInput.trim()) handleNextQuestion();
-                        if (e.key === 'Escape') goToMenu();
+                        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                          e.preventDefault();
+                          handleNextQuestion();
+                        }
                       }}
-                      aria-label={questions[step - 1].text}
+                      rows={3}
                     />
+
                     <AnimatePresence>
                       {currentInput.trim() && (
                         <motion.button
                           type="button"
-                          className="ink-submit-btn"
+                          className="quest-send-fab"
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.8 }}
@@ -381,7 +402,7 @@ function App() {
                 transition={{ duration: 0.45 }}
                 style={{ width: '100%' }}
               >
-                <VortexUpload
+                <DocumentUpload
                   onComplete={handleCompleteUpload}
                   onBackToMindmap={goToMenu}
                 />
@@ -402,7 +423,7 @@ function App() {
                   Thank you for taking the time to share your ideas. James Taylor will read through your notes and reply personally.
                 </p>
                 <div style={{ display: 'flex', gap: '0.8rem', marginTop: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                  <button className="clean-secondary-btn" onClick={() => setStep('relay')}>
+                  <button className="clean-secondary-btn" onClick={() => setStep('contact')}>
                     Send a Direct Note
                   </button>
                   <button className="clean-primary-btn" onClick={handleRestart}>

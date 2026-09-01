@@ -260,7 +260,7 @@ const BRANCHES = [
   },
 ];
 
-export default function TalentTreeScene({ onBack, onStartBriefWithTalents }) {
+export default function EducationScene({ onBack, onStartBriefWithEducation }) {
   // All tabs open by default (user can toggle closed if desired)
   const [collapsedIds, setCollapsedIds] = useState(new Set());
 

@@ -60,7 +60,7 @@ const UploadChestFrame = ({ isDragging }) => (
   </svg>
 );
 
-export default function VortexUpload({ onComplete, onBackToMindmap }) {
+export default function DocumentUpload({ onComplete, onBackToMindmap }) {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState([]);
 

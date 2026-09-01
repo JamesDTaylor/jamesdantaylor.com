@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { LinkedInIcon } from './Icons';
 
-export default function RelayScene({ onBack, onStartBrief }) {
+export default function ContactScene({ onBack, onStartBrief }) {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);

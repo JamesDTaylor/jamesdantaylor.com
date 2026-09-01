@@ -135,7 +135,7 @@ const EXPERIENCES = [
   },
 ];
 
-export default function ArsenalScene({ onBack, onStartBriefWithProject }) {
+export default function ExperienceScene({ onBack, onStartBriefWithExperience }) {
   const [selectedExperience, setSelectedExperience] = useState(null);
 
   useEffect(() => {

@@ -81,7 +81,7 @@ const WaxSealBadge = () => (
   </motion.div>
 );
 
-export default function DossierScene({ onBack, onStartQuest, onInspectArsenal }) {
+export default function SummaryScene({ onBack, onStartCollaborate, onInspectExperience }) {
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, []);
@@ -153,7 +153,7 @@ export default function DossierScene({ onBack, onStartQuest, onInspectArsenal })
           <motion.button
             type="button"
             className="clean-primary-btn"
-            onClick={onStartQuest}
+            onClick={onStartCollaborate}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
           >
@@ -163,7 +163,7 @@ export default function DossierScene({ onBack, onStartQuest, onInspectArsenal })
           <motion.button
             type="button"
             className="clean-secondary-btn"
-            onClick={onInspectArsenal}
+            onClick={onInspectExperience}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >

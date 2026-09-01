@@ -5,49 +5,49 @@ import { Search, BookOpen, FolderGit2, GraduationCap, MessageSquareHeart, Mail, 
 const COMMAND_ITEMS = [
   // Core Chapters
   {
-    id: 'dossier',
+    id: 'summary',
     type: 'portal',
     title: 'Summary',
     subtitle: 'MSc Neuroscience candidate in the Department of Psychiatry',
     icon: BookOpen,
     category: 'CHAPTER I',
-    action: (nav) => nav.goToSection('dossier'),
+    action: (nav) => nav.goToSection('summary'),
   },
   {
-    id: 'arsenal',
+    id: 'experience',
     type: 'portal',
     title: 'Experience',
     subtitle: 'Stellenbosch University, James Does Coaching, Breaking Boundaries, Insight Analytics, Food & Trees for Africa',
     icon: FolderGit2,
     category: 'CHAPTER II',
-    action: (nav) => nav.goToSection('arsenal'),
+    action: (nav) => nav.goToSection('experience'),
   },
   {
-    id: 'skills',
+    id: 'education',
     type: 'portal',
     title: 'Education & Background',
     subtitle: 'Stellenbosch University, Wits, Certifications & Honors',
     icon: GraduationCap,
     category: 'CHAPTER III',
-    action: (nav) => nav.goToSection('skills'),
+    action: (nav) => nav.goToSection('education'),
   },
   {
-    id: 'quest',
+    id: 'collaborate',
     type: 'portal',
     title: 'Collaborate',
     subtitle: 'Design and evaluate user-centred XR and digital mental health solutions',
     icon: MessageSquareHeart,
     category: 'CHAPTER IV',
-    action: (nav) => nav.goToSection('quest'),
+    action: (nav) => nav.goToSection('collaborate'),
   },
   {
-    id: 'relay',
+    id: 'contact',
     type: 'portal',
     title: 'Contact',
     subtitle: 'james.dan.taylor@gmail.com · linkedin.com/in/jamesdantaylor',
     icon: Mail,
     category: 'CHAPTER V',
-    action: (nav) => nav.goToSection('relay'),
+    action: (nav) => nav.goToSection('contact'),
   },
 
   // Experience Positions
@@ -58,7 +58,7 @@ const COMMAND_ITEMS = [
     subtitle: 'MSc Neuroscience candidate in the department of Psychiatry (Jan 2025 - Apr 2026)',
     icon: Box,
     category: 'EXPERIENCE',
-    action: (nav) => nav.goToSection('arsenal'),
+    action: (nav) => nav.goToSection('experience'),
   },
   {
     id: 'exp-coaching',
@@ -67,7 +67,7 @@ const COMMAND_ITEMS = [
     subtitle: 'Tailored career coaching to individuals managing chronic illnesses (May 2023 - Dec 2024)',
     icon: Box,
     category: 'EXPERIENCE',
-    action: (nav) => nav.goToSection('arsenal'),
+    action: (nav) => nav.goToSection('experience'),
   },
   {
     id: 'exp-bb',
@@ -76,7 +76,7 @@ const COMMAND_ITEMS = [
     subtitle: 'High-impact digital marketing strategies for mental health advocacy (Jun 2021 - Sep 2022)',
     icon: Box,
     category: 'EXPERIENCE',
-    action: (nav) => nav.goToSection('arsenal'),
+    action: (nav) => nav.goToSection('experience'),
   },
   {
     id: 'exp-independent',
@@ -85,7 +85,7 @@ const COMMAND_ITEMS = [
     subtitle: 'M&E web applications, Google Cloud Platform (GCP) architecture & automation (May 2020 - Sep 2022)',
     icon: Box,
     category: 'EXPERIENCE',
-    action: (nav) => nav.goToSection('arsenal'),
+    action: (nav) => nav.goToSection('experience'),
   },
   {
     id: 'exp-insight',
@@ -94,7 +94,7 @@ const COMMAND_ITEMS = [
     subtitle: 'Massmart reputation analysis, NGO awareness & Makro K-means segmentation (Aug 2017 - Jan 2021)',
     icon: Box,
     category: 'EXPERIENCE',
-    action: (nav) => nav.goToSection('arsenal'),
+    action: (nav) => nav.goToSection('experience'),
   },
   {
     id: 'exp-ftfa',
@@ -103,7 +103,7 @@ const COMMAND_ITEMS = [
     subtitle: 'Data projects, Google Apps Script systems & 100k Google Grant (Feb 2019 - May 2020)',
     icon: Box,
     category: 'EXPERIENCE',
-    action: (nav) => nav.goToSection('arsenal'),
+    action: (nav) => nav.goToSection('experience'),
   },
 
   // Education & Honors
@@ -114,7 +114,7 @@ const COMMAND_ITEMS = [
     subtitle: 'MSc (Neuroscience), Psychiatry · (Nov 2024 - Dec 2026)',
     icon: GraduationCap,
     category: 'EDUCATION',
-    action: (nav) => nav.goToSection('skills'),
+    action: (nav) => nav.goToSection('education'),
   },
   {
     id: 'edu-wits-hons',
@@ -123,7 +123,7 @@ const COMMAND_ITEMS = [
     subtitle: 'Cognitive Neuroscience / Psychology · (2015 - 2016)',
     icon: GraduationCap,
     category: 'EDUCATION',
-    action: (nav) => nav.goToSection('skills'),
+    action: (nav) => nav.goToSection('education'),
   },
   {
     id: 'edu-wits-bsc',
@@ -132,7 +132,7 @@ const COMMAND_ITEMS = [
     subtitle: 'Bachelor of Science · (2011 - 2014)',
     icon: GraduationCap,
     category: 'EDUCATION',
-    action: (nav) => nav.goToSection('skills'),
+    action: (nav) => nav.goToSection('education'),
   },
 
   // Certifications
@@ -143,7 +143,7 @@ const COMMAND_ITEMS = [
     subtitle: 'Professional Certification',
     icon: CheckCircle2,
     category: 'CERTIFICATIONS',
-    action: (nav) => nav.goToSection('skills'),
+    action: (nav) => nav.goToSection('education'),
   },
   {
     id: 'cert-ux',
@@ -152,7 +152,7 @@ const COMMAND_ITEMS = [
     subtitle: 'Google / UX Design Certification',
     icon: CheckCircle2,
     category: 'CERTIFICATIONS',
-    action: (nav) => nav.goToSection('skills'),
+    action: (nav) => nav.goToSection('education'),
   },
   {
     id: 'cert-gcp',
@@ -161,7 +161,7 @@ const COMMAND_ITEMS = [
     subtitle: 'Google Cloud Platform Certification',
     icon: CheckCircle2,
     category: 'CERTIFICATIONS',
-    action: (nav) => nav.goToSection('skills'),
+    action: (nav) => nav.goToSection('education'),
   },
   {
     id: 'cert-nn',
@@ -170,7 +170,7 @@ const COMMAND_ITEMS = [
     subtitle: 'Machine Learning & Web App Certification',
     icon: CheckCircle2,
     category: 'CERTIFICATIONS',
-    action: (nav) => nav.goToSection('skills'),
+    action: (nav) => nav.goToSection('education'),
   },
   {
     id: 'cert-python-ds',
@@ -179,7 +179,7 @@ const COMMAND_ITEMS = [
     subtitle: 'Data Science Certification',
     icon: CheckCircle2,
     category: 'CERTIFICATIONS',
-    action: (nav) => nav.goToSection('skills'),
+    action: (nav) => nav.goToSection('education'),
   },
 
   // Honors
@@ -190,7 +190,7 @@ const COMMAND_ITEMS = [
     subtitle: 'Academic Recognition',
     icon: Award,
     category: 'HONORS-AWARDS',
-    action: (nav) => nav.goToSection('skills'),
+    action: (nav) => nav.goToSection('education'),
   },
   {
     id: 'award-pma',
@@ -199,7 +199,7 @@ const COMMAND_ITEMS = [
     subtitle: 'Postgraduate Recognition & Scholarship',
     icon: Award,
     category: 'HONORS-AWARDS',
-    action: (nav) => nav.goToSection('skills'),
+    action: (nav) => nav.goToSection('education'),
   },
 ];
 

@@ -73,7 +73,7 @@ const InkedCardBorder = ({ isHovered, isSelected }) => (
 
 const PORTAL_ITEMS = [
   {
-    id: 'dossier',
+    id: 'summary',
     title: 'Summary',
     desc: 'MSc Neuroscience candidate researching virtual reality-based interventions for anxiety disorders and digital mental health solutions.',
     tag: 'Chapter I',
@@ -81,7 +81,7 @@ const PORTAL_ITEMS = [
     keyNum: '1',
   },
   {
-    id: 'arsenal',
+    id: 'experience',
     title: 'Experience',
     desc: 'Professional roles at Stellenbosch University, James Does Coaching, Breaking Boundaries, Insight Analytics, and Food & Trees for Africa.',
     tag: 'Chapter II',
@@ -89,7 +89,7 @@ const PORTAL_ITEMS = [
     keyNum: '2',
   },
   {
-    id: 'skills',
+    id: 'education',
     title: 'Education & Background',
     desc: 'Degrees at Stellenbosch University and University of the Witwatersrand, professional certifications, and honors-awards.',
     tag: 'Chapter III',
@@ -97,7 +97,7 @@ const PORTAL_ITEMS = [
     keyNum: '3',
   },
   {
-    id: 'quest',
+    id: 'collaborate',
     title: 'Collaborate',
     desc: 'Collaborating across academia, healthcare, and industry to design and evaluate user-centred XR and digital mental health solutions.',
     tag: 'Chapter IV',
@@ -105,7 +105,7 @@ const PORTAL_ITEMS = [
     keyNum: '4',
   },
   {
-    id: 'relay',
+    id: 'contact',
     title: 'Contact',
     desc: 'james.dan.taylor@gmail.com · linkedin.com/in/jamesdantaylor · Gauteng, South Africa.',
     tag: 'Chapter V',

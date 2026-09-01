@@ -2662,11 +2662,13 @@ html, body, #root, .app-root {
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Completely hide custom branch cursor and buzzing flies canvas on mobile/touch screens */
+  /* Completely hide custom cursor and particles on mobile/touch screens */
   .active-branch-cursor-root,
   .quill-flies-canvas,
   .parchment-quill-canvas,
-  .quill-cursor-root {
+  .quill-cursor-root,
+  .steampunk-cursor-root,
+  .steampunk-sparks-canvas {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;

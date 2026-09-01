@@ -2598,22 +2598,26 @@ html, body, #root, .app-root {
   html, body, #root, .app-root {
     height: 100dvh;
     min-height: -webkit-fill-available;
+    overflow-x: hidden;
   }
 
   .scene-container {
     height: 100dvh;
+    overflow-x: hidden;
   }
 
   .question-area {
-    padding: 4.2rem 1.0rem 4.5rem;
+    padding: 4.6rem 1.0rem 5.0rem;
     -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
   }
 
   /* Compact Floating Header */
   .map-header {
-    top: 0.6rem;
-    width: min(96%, 680px);
-    padding: 0.45rem 0.85rem;
+    top: 0.5rem;
+    width: min(95%, 680px);
+    padding: 0.42rem 0.85rem;
+    border-radius: 9999px;
   }
 
   .header-brand-text {
@@ -2622,69 +2626,365 @@ html, body, #root, .app-root {
   }
 
   .header-status-badge {
-    display: none; /* Hide secondary badge on mobile to save space */
+    display: none;
   }
 
   .map-kbd-chip {
-    display: none; /* Hide keyboard shortcut hints on touch screens */
+    display: none;
   }
 
   .map-index-btn {
-    padding: 0.3rem 0.65rem;
-    font-size: 0.68rem;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.72rem;
+    min-height: 36px;
+  }
+
+  /* Scene Back Button */
+  .scene-back-btn {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.82rem;
+    margin-bottom: 1.0rem;
+    min-height: 40px;
+    align-self: flex-start;
+  }
+
+  /* Narrative Headers across Chapters */
+  .narrative-header {
+    margin-bottom: 1.4rem;
+    text-align: left;
+    width: 100%;
+  }
+
+  .narrative-tag {
+    font-size: 0.76rem;
+    padding: 0.2rem 0.6rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .narrative-title {
+    font-size: clamp(1.6rem, 6.5vw, 2.2rem);
+    line-height: 1.25;
+    margin-bottom: 0.4rem;
+  }
+
+  .narrative-subtitle-ink {
+    font-size: 0.98rem;
+    line-height: 1.55;
+    max-width: 100%;
   }
 
   /* Home Scene Title & Subtitle */
   .parchment-hero-block {
     margin-bottom: 1.4rem;
+    text-align: center;
   }
 
   .parchment-hero-title {
     font-size: clamp(2.2rem, 7.5vw, 3.2rem);
     letter-spacing: 0.05em;
+    line-height: 1.15;
   }
 
-  /* Portal Cards */
+  /* Home Portal Matrix Grid */
+  .parchment-matrix-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.1rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
   .parchment-portal-card {
-    padding: 1.4rem 1.2rem 1.1rem;
-    min-height: 160px;
+    grid-column: auto !important;
+    max-width: 100% !important;
+    padding: 1.4rem 1.25rem 1.15rem;
+    min-height: 145px;
+    border-radius: 14px;
+  }
+
+  .portal-card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.35rem;
   }
 
   .portal-card-desc {
     font-size: 0.96rem;
-    line-height: 1.5;
+    line-height: 1.52;
+    color: var(--ink-secondary);
   }
 
-  /* Input fields: prevent iOS automatic zoom */
-  input, textarea, select, .relay-input, .relay-textarea, .quest-input {
-    font-size: 16px !important;
+  .portal-card-key-chip {
+    display: none; /* Key numbers aren't needed on touch screens */
   }
 
-  /* Horizontal Filter Chips on Arsenal and Skills */
-  .arsenal-filter-bar, .talent-category-tabs {
-    display: flex;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 6px;
+  /* Chapter I: Dossier Letter */
+  .dossier-letter-card {
+    padding: clamp(1.4rem, 4.5vw, 2.2rem) 1.2rem;
+    border-radius: 18px;
+    width: 100%;
+  }
+
+  .dossier-name-title {
+    font-size: clamp(1.8rem, 6.5vw, 2.4rem);
+  }
+
+  .dossier-headline-pill {
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .dossier-manuscript-text {
+    font-size: 1.06rem;
+    line-height: 1.7;
+    text-align: left;
+  }
+
+  .dossier-actions-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.7rem;
+    margin-top: 1.4rem;
+  }
+
+  .dossier-actions-row button,
+  .dossier-actions-row a {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+  }
+
+  .dossier-wax-seal {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-bottom: 0.8rem;
+    align-self: flex-start;
+  }
+
+  /* Chapter II: Experience Chronicles Grid */
+  .chronicle-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    width: 100%;
+  }
+
+  .chronicle-card {
+    padding: 1.3rem 1.15rem;
+    border-radius: 16px;
+  }
+
+  .chronicle-card-header {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 0.5rem;
-    scrollbar-width: none;
   }
 
-  .arsenal-filter-bar::-webkit-scrollbar, .talent-category-tabs::-webkit-scrollbar {
-    display: none;
+  .chronicle-org-name {
+    font-size: 1.12rem;
+  }
+
+  .chronicle-date-badge {
+    align-self: flex-start;
+    font-size: 0.74rem;
+    padding: 0.2rem 0.55rem;
+  }
+
+  .chronicle-role-title {
+    font-size: 1.08rem;
+    margin: 0.4rem 0;
+  }
+
+  .chronicle-desc-snippet {
+    font-size: 0.94rem;
+    line-height: 1.55;
+  }
+
+  /* Experience Detail Modal on Mobile */
+  .chronicle-modal-parchment {
+    width: 95vw !important;
+    max-height: 84dvh !important;
+    padding: 1.4rem 1.15rem !important;
+    border-radius: 18px !important;
+  }
+
+  .chronicle-modal-header {
+    gap: 0.8rem;
+  }
+
+  .modal-work-title {
+    font-size: 1.25rem !important;
+    line-height: 1.3;
+  }
+
+  .modal-work-story {
+    font-size: 0.98rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .chronicle-bullet-item {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin-bottom: 0.65rem;
+  }
+
+  /* Chapter III: Talent Tree Signpost on Mobile */
+  .talent-tree-container {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .ink-post-wrapper {
+    width: 100%;
+  }
+
+  .ink-post-trunk {
+    display: none; /* Streamline mobile display into a clean vertical journal */
+  }
+
+  .ink-post-stations {
+    width: 100%;
+    gap: 1.0rem;
+  }
+
+  .ink-post-station {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .ink-station-assembly {
+    width: 100%;
+  }
+
+  .ink-post-plank {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 12px;
+    padding: 0.85rem 1.1rem;
+    min-height: 48px;
+  }
+
+  .ink-post-plank-title {
+    font-size: 1.05rem;
+  }
+
+  .ink-scroll-card {
+    width: 100% !important;
+    padding: 1.1rem 1.0rem;
+    border-radius: 12px;
+  }
+
+  /* Chapter V: Relay Contact Form & Split Grid */
+  .relay-split-grid {
+    grid-template-columns: 1fr;
+    gap: 1.3rem;
+    width: 100%;
+  }
+
+  .relay-envelope-card {
+    padding: 1.3rem 1.15rem;
+    border-radius: 18px;
+    width: 100%;
+  }
+
+  .input-group label {
+    font-size: 0.88rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .input-group input,
+  .input-group textarea,
+  .relay-input,
+  .relay-textarea {
+    font-size: 16px !important;
+    padding: 0.85rem 1.0rem !important;
+    border-radius: 10px;
+  }
+
+  .contact-info-card {
+    padding: 1.1rem 1.0rem;
+    border-radius: 14px;
+    min-height: 54px;
+  }
+
+  .contact-val {
+    font-size: 0.90rem;
+    word-break: break-all;
+  }
+
+  /* Chapter IV: Questionnaire & Vortex Upload */
+  .question-card {
+    padding: 1.6rem 1.15rem;
+    border-radius: 18px;
+    width: 100%;
+  }
+
+  .question-text {
+    font-size: clamp(1.2rem, 4.5vw, 1.45rem);
+    line-height: 1.45;
+  }
+
+  .quest-textarea {
+    font-size: 16px !important;
+    min-height: 125px;
+    padding: 0.85rem 1.0rem;
+  }
+
+  .question-nav-row {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: space-between;
+    margin-top: 1.0rem;
+  }
+
+  .question-nav-btn {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.82rem;
+    min-height: 40px;
+  }
+
+  .question-dot {
+    width: 10px;
+    height: 10px;
   }
 
   /* Command Palette Modal on Mobile */
-  .command-palette-backdrop {
-    padding: 0.8rem;
+  .cmd-backdrop {
+    padding: 0.6rem;
     align-items: flex-start;
-    padding-top: 3.5rem;
+    padding-top: 3.2rem;
   }
 
-  .command-palette-dialog {
+  .cmd-modal-card {
     width: 100% !important;
     max-height: 82dvh !important;
+    border-radius: 18px !important;
+  }
+
+  .cmd-input-wrapper {
+    padding: 0.8rem 1.0rem;
+  }
+
+  .cmd-input-field {
+    font-size: 16px !important;
+    height: 42px;
+  }
+
+  .cmd-item-row {
+    padding: 0.75rem 0.85rem;
+    min-height: 52px;
+  }
+
+  .cmd-item-title {
+    font-size: 0.92rem;
+  }
+
+  .cmd-item-subtitle {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .cmd-footer-bar {
+    display: none; /* Hide keyboard shortcut footer on touch screens */
   }
 
   /* Mobile footer banner */
@@ -2698,11 +2998,24 @@ html, body, #root, .app-root {
 /* Extra Small Phones (< 480px) */
 @media (max-width: 480px) {
   .question-area {
-    padding: 3.8rem 0.75rem 4.0rem;
+    padding: 4.2rem 0.65rem 4.5rem;
+  }
+
+  .map-header {
+    padding: 0.35rem 0.65rem;
+  }
+
+  .header-brand-text {
+    font-size: 0.76rem;
+  }
+
+  .map-index-btn {
+    padding: 0.28rem 0.55rem;
+    font-size: 0.66rem;
   }
 
   .parchment-hero-title {
-    font-size: clamp(1.9rem, 8.5vw, 2.6rem);
+    font-size: clamp(1.9rem, 8.5vw, 2.5rem);
   }
 
   .parchment-portal-card {
@@ -2717,5 +3030,6 @@ html, body, #root, .app-root {
     font-size: 0.90rem;
   }
 }
+
 
 

@@ -295,13 +295,18 @@ export default function ParchmentQuillCursor() {
       window.removeEventListener('resize', handleResize);
       if (animId) cancelAnimationFrame(animId);
     };
-  }, [isCardHovered, isInteractive, isClicking]);
+  }, [isMobile, isCardHovered, isInteractive, isClicking]);
+
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <>
       {/* Simulated Buzzing Flies Canvas */}
       <canvas
         ref={fliesCanvasRef}
+        className="quill-flies-canvas"
         style={{
           position: 'fixed',
           inset: 0,

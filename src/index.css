@@ -2569,7 +2569,7 @@ html, body, #root, .app-root {
 /* ============================================ */
 
 /* Touch-specific optimizations */
-@media (hover: none) and (pointer: coarse) {
+@media (max-width: 768px), (hover: none), (pointer: coarse) {
   /* Restore native touch cursor behavior */
   html, body, #root, .app-root, *, *::before, *::after, button, a, input, textarea, select, [role="button"], [role="menuitem"] {
     cursor: auto !important;
@@ -2581,9 +2581,15 @@ html, body, #root, .app-root {
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Hide custom calligraphy quill canvas on touch devices */
-  .parchment-quill-canvas {
+  /* Completely hide custom branch cursor and buzzing flies canvas on mobile/touch screens */
+  .active-branch-cursor-root,
+  .quill-flies-canvas,
+  .parchment-quill-canvas,
+  .quill-cursor-root {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 }
 

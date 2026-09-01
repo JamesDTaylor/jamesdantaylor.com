@@ -10,7 +10,7 @@ import CharacterSwirlText from './components/CharacterSwirlText';
 import DocumentUpload from './components/DocumentUpload';
 import InkCharacterEngine from './components/InkCharacterEngine';
 import FestoonLights from './components/FestoonLights';
-import SteampunkCursor from './components/SteampunkCursor';
+import CartographerQuillCursor from './components/CartographerQuillCursor';
 import CommandPalette from './components/CommandPalette';
 import { ArrowRight, ArrowLeft, CheckCircle, RotateCcw } from 'lucide-react';
 
@@ -220,8 +220,8 @@ function App() {
 
   return (
     <div className="app-root">
-      {/* Golden Steampunk Precision Pointer Cursor */}
-      <SteampunkCursor />
+      {/* Antique Cartographer's Ink Nib & Stardust Cursor */}
+      <CartographerQuillCursor />
 
       {/* Living 2D Grounded Wanderer Character Engine */}
       <InkCharacterEngine />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
@@ -19,10 +19,18 @@ export default function ContactScene({ onBack, onStartBrief }) {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
+  const messageRef = useRef(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, []);
+
+  useEffect(() => {
+    if (messageRef.current) {
+      messageRef.current.style.height = 'auto';
+      messageRef.current.style.height = `${Math.max(120, messageRef.current.scrollHeight)}px`;
+    }
+  }, [formData.message]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -154,11 +162,16 @@ export default function ContactScene({ onBack, onStartBrief }) {
                   </label>
                   <textarea
                     id="message"
+                    ref={messageRef}
                     required
                     rows={4}
                     placeholder="Share your research ideas, collaboration proposals, or project requirements..."
                     value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, message: e.target.value });
+                      e.target.style.height = 'auto';
+                      e.target.style.height = `${Math.max(120, e.target.scrollHeight)}px`;
+                    }}
                   />
                 </div>
 

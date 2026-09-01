@@ -435,7 +435,7 @@ export default function EducationScene({ onBack, onStartBriefWithEducation }) {
         <motion.button
           type="button"
           className="clean-primary-btn"
-          onClick={() => onStartBriefWithTalents('Collaborative Projects')}
+          onClick={() => onStartBriefWithEducation?.('Education & Background')}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
         >

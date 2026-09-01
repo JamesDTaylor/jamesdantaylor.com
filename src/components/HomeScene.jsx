@@ -194,9 +194,20 @@ export default function HomeScene({ onAction }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [centerOffset, setCenterOffset] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
   const cardRefs = useRef([]);
   const isNavigatingRef = useRef(false);
   const navigationTimerRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const triggerNavigation = useCallback(
     (item) => {
@@ -348,11 +359,11 @@ export default function HomeScene({ onAction }) {
               animate={
                 isSelected
                   ? {
-                      // Drift smoothly to center (~0.45s), rest in middle for 5 seconds total, then fade out at the very end
+                      // Move smoothly to center without enlarging on mobile for maximum legibility
                       x: [0, centerOffset.x, centerOffset.x, centerOffset.x],
-                      y: [0, centerOffset.y, centerOffset.y - 4, centerOffset.y],
-                      scale: [1, 1.18, 1.20, 1.22],
-                      rotateZ: [0, -0.4, 0, 0],
+                      y: [0, centerOffset.y, centerOffset.y, centerOffset.y],
+                      scale: isMobile ? [1, 1, 1, 1] : [1, 1.04, 1.04, 1.04],
+                      rotateZ: isMobile ? [0, 0, 0, 0] : [0, -0.2, 0, 0],
                       opacity: [1, 1, 1, 0],
                       filter: ['blur(0px)', 'blur(0px)', 'blur(0px)', 'blur(4px)'],
                       zIndex: 100,
@@ -412,7 +423,7 @@ export default function HomeScene({ onAction }) {
                   <Icon size={20} />
                 </div>
 
-                <div className="portal-card-key-chip">[{item.keyNum}]</div>
+                <div className="portal-card-key-chip">{item.keyNum}</div>
               </div>
 
               <h2 className="portal-card-title">{item.title}</h2>

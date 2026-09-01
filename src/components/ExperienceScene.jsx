@@ -327,7 +327,7 @@ export default function ExperienceScene({ onBack, onStartBriefWithExperience }) 
                   onClick={() => {
                     const title = selectedExperience.role;
                     setSelectedExperience(null);
-                    onStartBriefWithProject(title);
+                    onStartBriefWithExperience?.(title);
                   }}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}

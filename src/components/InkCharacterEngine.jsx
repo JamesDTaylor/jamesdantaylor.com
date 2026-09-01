@@ -426,11 +426,35 @@ export default function InkCharacterEngine({ extraCreaturesCount = 0 }) {
       });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    const handleTouchStart = (e) => {
+      if (e.touches && e.touches[0]) {
+        const touch = e.touches[0];
+        const clickX = touch.clientX;
+        const clickY = touch.clientY;
+
+        charactersRef.current.forEach((char) => {
+          const dx = clickX - char.x;
+          const dy = clickY - (char.y - 25);
+          const dist = Math.hypot(dx, dy);
+
+          if (dist < 65) {
+            const impulseX = (dx < 0 ? 1 : -1) * 18;
+            char.pushVelX += impulseX;
+            char.pushVelY -= 10;
+            char.bodyLeanVel += (dx < 0 ? 0.1 : -0.1);
+            char.eyeDilation = 1.25;
+          }
+        });
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('touchstart', handleTouchStart);
     };
   }, []);
 

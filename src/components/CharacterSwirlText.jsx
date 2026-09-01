@@ -10,7 +10,7 @@ function pseudoNoise(seed, t) {
          Math.cos(seed * 7.233 + t * 0.97) * 0.5;
 }
 
-export default function CharacterSwirlText({ text }) {
+export default function CharacterSwirlText({ text, className = '' }) {
   const lettersRef = useRef([]);
   const rafRef = useRef(null);
   const startTimeRef = useRef(null);
@@ -197,7 +197,7 @@ export default function CharacterSwirlText({ text }) {
 
   return (
     <motion.div
-      className="swirl-text-container"
+      className={`swirl-text-container ${className}`.trim()}
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, filter: 'blur(12px)' }}
       transition={{ duration: 0.8, ease: 'easeInOut' }}

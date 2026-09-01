@@ -43,6 +43,15 @@ function App() {
     }
   }, [isQuestionStep, step]);
 
+  // Auto-grow textarea smoothly as text expands or when navigating questions
+  useEffect(() => {
+    if (isQuestionStep && inputRef.current) {
+      inputRef.current.style.height = 'auto';
+      const newHeight = Math.max(110, inputRef.current.scrollHeight);
+      inputRef.current.style.height = `${newHeight}px`;
+    }
+  }, [isQuestionStep, step, currentInput]);
+
   const saveCurrentAnswer = useCallback(() => {
     if (isQuestionStep) {
       const qId = questions[step - 1].id;
@@ -321,7 +330,11 @@ function App() {
                       className="quest-textarea"
                       placeholder="Inscribe your thoughts, clinical objectives, or project notes..."
                       value={currentInput}
-                      onChange={(e) => setCurrentInput(e.target.value)}
+                      onChange={(e) => {
+                        setCurrentInput(e.target.value);
+                        e.target.style.height = 'auto';
+                        e.target.style.height = `${Math.max(110, e.target.scrollHeight)}px`;
+                      }}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
                           e.preventDefault();

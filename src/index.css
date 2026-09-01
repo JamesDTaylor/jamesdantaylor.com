@@ -64,7 +64,7 @@ html, body, #root, .app-root {
   user-select: none;
 }
 
-@media (pointer: fine) {
+@media (min-width: 768px) {
   html, body, #root, .app-root, *, *::before, *::after, button, a, input, textarea, select, [role="button"], [role="menuitem"] {
     cursor: none !important;
   }

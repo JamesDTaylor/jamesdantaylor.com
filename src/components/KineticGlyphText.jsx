@@ -49,8 +49,7 @@ export default function KineticGlyphText({
   useEffect(() => {
     const isMobile = typeof window !== 'undefined' && (
       window.innerWidth < 768 ||
-      window.matchMedia('(hover: none)').matches ||
-      window.matchMedia('(pointer: coarse)').matches
+      window.matchMedia('(hover: none) and (pointer: coarse)').matches
     );
 
     if (isMobile) return;
@@ -67,8 +66,7 @@ export default function KineticGlyphText({
   useEffect(() => {
     const isMobile = typeof window !== 'undefined' && (
       window.innerWidth < 768 ||
-      window.matchMedia('(hover: none)').matches ||
-      window.matchMedia('(pointer: coarse)').matches
+      window.matchMedia('(hover: none) and (pointer: coarse)').matches
     );
 
     if (isMobile) return;

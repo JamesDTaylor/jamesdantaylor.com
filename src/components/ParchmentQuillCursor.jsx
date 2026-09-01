@@ -24,14 +24,9 @@ function createFlies() {
 }
 
 function checkIsMobileOrTouch() {
-  if (typeof window === 'undefined') return true;
-  return (
-    window.innerWidth < 768 ||
-    window.matchMedia('(hover: none)').matches ||
-    window.matchMedia('(pointer: coarse)').matches ||
-    'ontouchstart' in window ||
-    navigator.maxTouchPoints > 0
-  );
+  if (typeof window === 'undefined') return false;
+  // True mobile phone/touch screen check (screen < 768px or touch-only screen without fine hover pointer)
+  return window.innerWidth < 768 || window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 }
 
 export default function ParchmentQuillCursor() {

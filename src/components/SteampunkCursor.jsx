@@ -11,10 +11,13 @@ import React, { useEffect, useRef, useState } from 'react';
 const SPARK_MAX = 35;
 
 export default function SteampunkCursor() {
-  const [isDesktopActive, setIsDesktopActive] = useState(false);
+  const [isDesktopActive, setIsDesktopActive] = useState(
+    typeof window !== 'undefined' ? window.innerWidth >= 768 : true
+  );
   const [isHovered, setIsHovered] = useState(false);
   const [isCardHovered, setIsCardHovered] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
+  const [hasMoved, setHasMoved] = useState(false);
 
   const cursorRootRef = useRef(null);
   const gear1Ref = useRef(null);
@@ -61,11 +64,12 @@ export default function SteampunkCursor() {
       p.lastY = clientY;
       p.lastTime = now;
 
-      if (!isDesktopActive) {
-        setIsDesktopActive(true);
+      if (!hasMoved) {
+        setHasMoved(true);
       }
 
       if (cursorRootRef.current) {
+        cursorRootRef.current.style.opacity = '1';
         cursorRootRef.current.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
       }
 
@@ -248,7 +252,9 @@ export default function SteampunkCursor() {
           height: 0,
           pointerEvents: 'none',
           zIndex: 99999,
-          willChange: 'transform',
+          willChange: 'transform, opacity',
+          opacity: hasMoved ? 1 : 0,
+          transition: 'opacity 0.15s ease',
         }}
       >
         <div

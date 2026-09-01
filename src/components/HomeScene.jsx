@@ -234,17 +234,25 @@ export default function HomeScene({ onAction }) {
       if (isNavigatingRef.current) return;
       isNavigatingRef.current = true;
 
-      // Compute vector offset to drift selected card to the exact center of viewport
+      // Compute vector offset to drift selected card to the exact midpoint between the tree boundaries
       const el = cardRefs.current[index];
       if (el) {
         const rect = el.getBoundingClientRect();
         const cardCenterX = rect.left + rect.width / 2;
         const cardCenterY = rect.top + rect.height / 2;
-        const screenCenterX = window.innerWidth / 2;
-        const screenCenterY = window.innerHeight / 2;
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        // Tree boundaries from InkCharacterEngine (Left: 0.04 * width, Right: 0.94 * width)
+        const treeLeftX = viewportWidth * 0.04;
+        const treeRightX = viewportWidth * 0.94;
+        const treeClearingCenterX = (treeLeftX + treeRightX) / 2; // Midpoint between trees (0.49 * width)
+        const treeClearingCenterY = viewportHeight / 2;
+
         setCenterOffset({
-          x: Math.round(screenCenterX - cardCenterX),
-          y: Math.round(screenCenterY - cardCenterY),
+          x: Math.round(treeClearingCenterX - cardCenterX),
+          y: Math.round(treeClearingCenterY - cardCenterY),
         });
       }
 

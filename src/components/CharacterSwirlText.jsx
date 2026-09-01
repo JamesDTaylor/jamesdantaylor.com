@@ -17,6 +17,14 @@ export default function CharacterSwirlText({ text }) {
   const mouseRef = useRef({ x: -9999, y: -9999, targetX: -9999, targetY: -9999 });
 
   useEffect(() => {
+    const isMobile = typeof window !== 'undefined' && (
+      window.innerWidth < 768 ||
+      window.matchMedia('(hover: none)').matches ||
+      window.matchMedia('(pointer: coarse)').matches
+    );
+
+    if (isMobile) return;
+
     const handleMouseMove = (e) => {
       mouseRef.current.targetX = e.clientX;
       mouseRef.current.targetY = e.clientY;

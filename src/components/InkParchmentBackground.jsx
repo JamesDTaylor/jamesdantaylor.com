@@ -28,6 +28,7 @@ export default function InkParchmentBackground() {
 
   useEffect(() => {
     const handleMouseDown = (e) => {
+      if (window.innerWidth < 768 || window.matchMedia('(hover: none)').matches) return;
       ripplesRef.current.push({
         x: e.clientX,
         y: e.clientY,
@@ -490,188 +491,190 @@ export default function InkParchmentBackground() {
       }
 
       // ============================================================
-      // 4. MATHEMATICAL BOIDS BIRDS IN TRUE SIDE PROFILE
+      // 4. MATHEMATICAL BOIDS BIRDS (Desktop Only - Disabled on Mobile)
       // ============================================================
-      ctx.save();
-      
-      const flockTargetX = width * 0.5 + Math.cos(now * 0.0004) * (width * 0.35);
-      const flockTargetY = height * 0.22 + Math.sin(now * 0.0006) * (height * 0.10);
-
-      const rSep = 26;
-      const rAli = 75;
-      const rCoh = 110;
-
-      for (let i = 0; i < flock.length; i++) {
-        const b = flock[i];
-        let sepX = 0, sepY = 0, sepCount = 0;
-        let aliX = 0, aliY = 0, aliCount = 0;
-        let cohX = 0, cohY = 0, cohCount = 0;
-
-        for (let j = 0; j < flock.length; j++) {
-          if (i === j) continue;
-          const other = flock[j];
-          const dx = b.x - other.x;
-          const dy = b.y - other.y;
-          const dist = Math.hypot(dx, dy);
-
-          if (dist > 0 && dist < rSep) {
-            sepX += (dx / dist) / dist;
-            sepY += (dy / dist) / dist;
-            sepCount++;
-          }
-          if (dist > 0 && dist < rAli) {
-            aliX += other.vx;
-            aliY += other.vy;
-            aliCount++;
-          }
-          if (dist > 0 && dist < rCoh) {
-            cohX += other.x;
-            cohY += other.y;
-            cohCount++;
-          }
-        }
-
-        let steerSepX = 0, steerSepY = 0;
-        if (sepCount > 0) {
-          sepX /= sepCount;
-          sepY /= sepCount;
-          const sepLen = Math.hypot(sepX, sepY);
-          if (sepLen > 0.001) {
-            steerSepX = (sepX / sepLen) * b.maxSpeed - b.vx;
-            steerSepY = (sepY / sepLen) * b.maxSpeed - b.vy;
-          }
-        }
-
-        let steerAliX = 0, steerAliY = 0;
-        if (aliCount > 0) {
-          aliX /= aliCount;
-          aliY /= aliCount;
-          const aliLen = Math.hypot(aliX, aliY);
-          if (aliLen > 0.001) {
-            steerAliX = (aliX / aliLen) * b.maxSpeed - b.vx;
-            steerAliY = (aliY / aliLen) * b.maxSpeed - b.vy;
-          }
-        }
-
-        let steerCohX = 0, steerCohY = 0;
-        if (cohCount > 0) {
-          cohX /= cohCount;
-          cohY /= cohCount;
-          const toCenterX = cohX - b.x;
-          const toCenterY = cohY - b.y;
-          const cohLen = Math.hypot(toCenterX, toCenterY);
-          if (cohLen > 0.001) {
-            steerCohX = (toCenterX / cohLen) * b.maxSpeed - b.vx;
-            steerCohY = (toCenterY / cohLen) * b.maxSpeed - b.vy;
-          }
-        }
-
-        const toTargX = flockTargetX - b.x;
-        const toTargY = flockTargetY - b.y;
-        const targLen = Math.hypot(toTargX, toTargY);
-        let steerTargX = 0, steerTargY = 0;
-        if (targLen > 0.001) {
-          steerTargX = (toTargX / targLen) * b.maxSpeed - b.vx;
-          steerTargY = (toTargY / targLen) * b.maxSpeed - b.vy;
-        }
-
-        let boundY = 0;
-        if (b.y < height * 0.08) boundY = 0.06;
-        if (b.y > height * 0.42) boundY = -0.06;
-
-        let ax = steerSepX * 1.5 + steerAliX * 1.1 + steerCohX * 0.9 + steerTargX * 0.35;
-        let ay = steerSepY * 1.5 + steerAliY * 1.1 + steerCohY * 0.9 + steerTargY * 0.35 + boundY;
-
-        // Gentle forward cruising bias so the flock maintains a natural left-to-right migration across the sky
-        if (b.vx < 0.8) ax += 0.035;
-
-        const forceLen = Math.hypot(ax, ay);
-        if (forceLen > b.maxForce) {
-          ax = (ax / forceLen) * b.maxForce;
-          ay = (ay / forceLen) * b.maxForce;
-        }
-
-        b.vx += ax;
-        b.vy += ay;
-        const speed = Math.hypot(b.vx, b.vy);
-        if (speed > b.maxSpeed) {
-          b.vx = (b.vx / speed) * b.maxSpeed;
-          b.vy = (b.vy / speed) * b.maxSpeed;
-        } else if (speed < b.minSpeed) {
-          b.vx = (b.vx / speed) * b.minSpeed;
-          b.vy = (b.vy / speed) * b.minSpeed;
-        }
-
-        b.x += b.vx;
-        b.y += b.vy;
-
-        if (b.x < -40) b.x = width + 30;
-        if (b.x > width + 40) b.x = -30;
-
-        b.glideTimer--;
-        if (b.glideTimer <= 0) {
-          b.isGliding = !b.isGliding;
-          b.glideTimer = b.isGliding ? b.glideDuration : (45 + Math.random() * 80);
-        }
-
-        if (!b.isGliding) {
-          b.flapPhase += b.flapFreq * (speed / b.maxSpeed);
-        }
-
-        // Side profile orientation & pitch (Always upright: back on top, feet/belly on bottom)
-        const isFacingLeft = b.vx < 0;
-        const speedH = Math.max(0.1, Math.abs(b.vx));
-        // Realistic avian flight pitch angle (clamped within +/- 15 degrees so bird never inverts)
-        const pitch = Math.max(-0.25, Math.min(0.25, Math.atan2(b.vy, speedH)));
-        const flapSin = b.isGliding ? 0.35 : Math.sin(b.flapPhase);
-
-        // ─── Render Bird in Pure Side Elevation Profile (Always Right-Side Up) ───
+      if (width >= 768) {
         ctx.save();
-        ctx.translate(b.x, b.y);
-        ctx.scale(isFacingLeft ? -b.scale : b.scale, b.scale);
-        ctx.rotate(pitch);
+        
+        const flockTargetX = width * 0.5 + Math.cos(now * 0.0004) * (width * 0.35);
+        const flockTargetY = height * 0.22 + Math.sin(now * 0.0006) * (height * 0.10);
 
-        ctx.fillStyle = '#220f06';
-        ctx.strokeStyle = '#140904';
-        ctx.lineWidth = 1.0;
+        const rSep = 26;
+        const rAli = 75;
+        const rCoh = 110;
 
-        // 1. Far Wing (Behind torso in perspective)
-        ctx.save();
-        ctx.fillStyle = '#3a1e10';
-        ctx.beginPath();
-        const farWingY = flapSin * -10.0 - 2.0;
-        ctx.moveTo(0, -1.0);
-        ctx.quadraticCurveTo(-2, farWingY * 0.6 - 1, -6, farWingY);
-        ctx.quadraticCurveTo(-3, farWingY * 0.4, 1.5, -0.5);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
+        for (let i = 0; i < flock.length; i++) {
+          const b = flock[i];
+          let sepX = 0, sepY = 0, sepCount = 0;
+          let aliX = 0, aliY = 0, aliCount = 0;
+          let cohX = 0, cohY = 0, cohCount = 0;
 
-        // 2. Streamlined Bird Body in Side Elevation (Head, Beak, Chest, Tail)
-        ctx.beginPath();
-        ctx.moveTo(4.5, 0.2); // Beak tip
-        ctx.lineTo(2.8, -0.8); // Upper beak / forehead
-        ctx.quadraticCurveTo(1.5, -2.2, -1.5, -1.6); // Crown & back
-        ctx.lineTo(-6.5, -0.5); // Tail tip
-        ctx.lineTo(-4.0, 0.6); // Under tail
-        ctx.quadraticCurveTo(-1.0, 2.2, 1.8, 1.4); // Chest / belly
-        ctx.lineTo(3.2, 0.4); // Lower beak
-        ctx.closePath();
-        ctx.fill();
+          for (let j = 0; j < flock.length; j++) {
+            if (i === j) continue;
+            const other = flock[j];
+            const dx = b.x - other.x;
+            const dy = b.y - other.y;
+            const dist = Math.hypot(dx, dy);
 
-        // 3. Near Main Wing (Flexing with harmonic wing stroke in side view)
-        ctx.beginPath();
-        const nearWingY = flapSin * -13.0 - 3.0;
-        const wingTipX = -7 - (flapSin > 0 ? flapSin * 2.5 : 0);
-        ctx.moveTo(0.5, -0.8); // Shoulder joint
-        ctx.quadraticCurveTo(-2.5, nearWingY * 0.5 - 2, wingTipX, nearWingY); // Wing upper leading edge
-        ctx.quadraticCurveTo(-3.0, nearWingY * 0.3, -2.0, 0.0); // Trailing edge feathers
-        ctx.closePath();
-        ctx.fill();
+            if (dist > 0 && dist < rSep) {
+              sepX += (dx / dist) / dist;
+              sepY += (dy / dist) / dist;
+              sepCount++;
+            }
+            if (dist > 0 && dist < rAli) {
+              aliX += other.vx;
+              aliY += other.vy;
+              aliCount++;
+            }
+            if (dist > 0 && dist < rCoh) {
+              cohX += other.x;
+              cohY += other.y;
+              cohCount++;
+            }
+          }
 
+          let steerSepX = 0, steerSepY = 0;
+          if (sepCount > 0) {
+            sepX /= sepCount;
+            sepY /= sepCount;
+            const sepLen = Math.hypot(sepX, sepY);
+            if (sepLen > 0.001) {
+              steerSepX = (sepX / sepLen) * b.maxSpeed - b.vx;
+              steerSepY = (sepY / sepLen) * b.maxSpeed - b.vy;
+            }
+          }
+
+          let steerAliX = 0, steerAliY = 0;
+          if (aliCount > 0) {
+            aliX /= aliCount;
+            aliY /= aliCount;
+            const aliLen = Math.hypot(aliX, aliY);
+            if (aliLen > 0.001) {
+              steerAliX = (aliX / aliLen) * b.maxSpeed - b.vx;
+              steerAliY = (aliY / aliLen) * b.maxSpeed - b.vy;
+            }
+          }
+
+          let steerCohX = 0, steerCohY = 0;
+          if (cohCount > 0) {
+            cohX /= cohCount;
+            cohY /= cohCount;
+            const toCenterX = cohX - b.x;
+            const toCenterY = cohY - b.y;
+            const cohLen = Math.hypot(toCenterX, toCenterY);
+            if (cohLen > 0.001) {
+              steerCohX = (toCenterX / cohLen) * b.maxSpeed - b.vx;
+              steerCohY = (toCenterY / cohLen) * b.maxSpeed - b.vy;
+            }
+          }
+
+          const toTargX = flockTargetX - b.x;
+          const toTargY = flockTargetY - b.y;
+          const targLen = Math.hypot(toTargX, toTargY);
+          let steerTargX = 0, steerTargY = 0;
+          if (targLen > 0.001) {
+            steerTargX = (toTargX / targLen) * b.maxSpeed - b.vx;
+            steerTargY = (toTargY / targLen) * b.maxSpeed - b.vy;
+          }
+
+          let boundY = 0;
+          if (b.y < height * 0.08) boundY = 0.06;
+          if (b.y > height * 0.42) boundY = -0.06;
+
+          let ax = steerSepX * 1.5 + steerAliX * 1.1 + steerCohX * 0.9 + steerTargX * 0.35;
+          let ay = steerSepY * 1.5 + steerAliY * 1.1 + steerCohY * 0.9 + steerTargY * 0.35 + boundY;
+
+          // Gentle forward cruising bias so the flock maintains a natural left-to-right migration across the sky
+          if (b.vx < 0.8) ax += 0.035;
+
+          const forceLen = Math.hypot(ax, ay);
+          if (forceLen > b.maxForce) {
+            ax = (ax / forceLen) * b.maxForce;
+            ay = (ay / forceLen) * b.maxForce;
+          }
+
+          b.vx += ax;
+          b.vy += ay;
+          const speed = Math.hypot(b.vx, b.vy);
+          if (speed > b.maxSpeed) {
+            b.vx = (b.vx / speed) * b.maxSpeed;
+            b.vy = (b.vy / speed) * b.maxSpeed;
+          } else if (speed < b.minSpeed) {
+            b.vx = (b.vx / speed) * b.minSpeed;
+            b.vy = (b.vy / speed) * b.minSpeed;
+          }
+
+          b.x += b.vx;
+          b.y += b.vy;
+
+          if (b.x < -40) b.x = width + 30;
+          if (b.x > width + 40) b.x = -30;
+
+          b.glideTimer--;
+          if (b.glideTimer <= 0) {
+            b.isGliding = !b.isGliding;
+            b.glideTimer = b.isGliding ? b.glideDuration : (45 + Math.random() * 80);
+          }
+
+          if (!b.isGliding) {
+            b.flapPhase += b.flapFreq * (speed / b.maxSpeed);
+          }
+
+          // Side profile orientation & pitch (Always upright: back on top, feet/belly on bottom)
+          const isFacingLeft = b.vx < 0;
+          const speedH = Math.max(0.1, Math.abs(b.vx));
+          // Realistic avian flight pitch angle (clamped within +/- 15 degrees so bird never inverts)
+          const pitch = Math.max(-0.25, Math.min(0.25, Math.atan2(b.vy, speedH)));
+          const flapSin = b.isGliding ? 0.35 : Math.sin(b.flapPhase);
+
+          // ─── Render Bird in Pure Side Elevation Profile (Always Right-Side Up) ───
+          ctx.save();
+          ctx.translate(b.x, b.y);
+          ctx.scale(isFacingLeft ? -b.scale : b.scale, b.scale);
+          ctx.rotate(pitch);
+
+          ctx.fillStyle = '#220f06';
+          ctx.strokeStyle = '#140904';
+          ctx.lineWidth = 1.0;
+
+          // 1. Far Wing (Behind torso in perspective)
+          ctx.save();
+          ctx.fillStyle = '#3a1e10';
+          ctx.beginPath();
+          const farWingY = flapSin * -10.0 - 2.0;
+          ctx.moveTo(0, -1.0);
+          ctx.quadraticCurveTo(-2, farWingY * 0.6 - 1, -6, farWingY);
+          ctx.quadraticCurveTo(-3, farWingY * 0.4, 1.5, -0.5);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+
+          // 2. Streamlined Bird Body in Side Elevation (Head, Beak, Chest, Tail)
+          ctx.beginPath();
+          ctx.moveTo(4.5, 0.2); // Beak tip
+          ctx.lineTo(2.8, -0.8); // Upper beak / forehead
+          ctx.quadraticCurveTo(1.5, -2.2, -1.5, -1.6); // Crown & back
+          ctx.lineTo(-6.5, -0.5); // Tail tip
+          ctx.lineTo(-4.0, 0.6); // Under tail
+          ctx.quadraticCurveTo(-1.0, 2.2, 1.8, 1.4); // Chest / belly
+          ctx.lineTo(3.2, 0.4); // Lower beak
+          ctx.closePath();
+          ctx.fill();
+
+          // 3. Near Main Wing (Flexing with harmonic wing stroke in side view)
+          ctx.beginPath();
+          const nearWingY = flapSin * -13.0 - 3.0;
+          const wingTipX = -7 - (flapSin > 0 ? flapSin * 2.5 : 0);
+          ctx.moveTo(0.5, -0.8); // Shoulder joint
+          ctx.quadraticCurveTo(-2.5, nearWingY * 0.5 - 2, wingTipX, nearWingY); // Wing upper leading edge
+          ctx.quadraticCurveTo(-3.0, nearWingY * 0.3, -2.0, 0.0); // Trailing edge feathers
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.restore();
+        }
         ctx.restore();
       }
-      ctx.restore();
 
       // ============================================================
       // 5. ARCHITECTURAL CITY SKYLINE INK LAYERS (Clean Rooflines)

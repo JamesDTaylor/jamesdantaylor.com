@@ -47,6 +47,14 @@ export default function KineticGlyphText({
   }, [text]);
 
   useEffect(() => {
+    const isMobile = typeof window !== 'undefined' && (
+      window.innerWidth < 768 ||
+      window.matchMedia('(hover: none)').matches ||
+      window.matchMedia('(pointer: coarse)').matches
+    );
+
+    if (isMobile) return;
+
     const handleMouseMove = (e) => {
       mouseRef.current.x = e.clientX;
       mouseRef.current.y = e.clientY;
@@ -57,6 +65,14 @@ export default function KineticGlyphText({
   }, []);
 
   useEffect(() => {
+    const isMobile = typeof window !== 'undefined' && (
+      window.innerWidth < 768 ||
+      window.matchMedia('(hover: none)').matches ||
+      window.matchMedia('(pointer: coarse)').matches
+    );
+
+    if (isMobile) return;
+
     let animId;
 
     const animate = () => {

@@ -23,7 +23,19 @@ function createFlies() {
   }));
 }
 
+function checkIsMobileOrTouch() {
+  if (typeof window === 'undefined') return true;
+  return (
+    window.innerWidth < 768 ||
+    window.matchMedia('(hover: none)').matches ||
+    window.matchMedia('(pointer: coarse)').matches ||
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0
+  );
+}
+
 export default function ParchmentQuillCursor() {
+  const [isMobile, setIsMobile] = useState(() => checkIsMobileOrTouch());
   const [isCardHovered, setIsCardHovered] = useState(false);
   const [isInteractive, setIsInteractive] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
@@ -58,11 +70,15 @@ export default function ParchmentQuillCursor() {
   });
 
   useEffect(() => {
-    const isTouch = 'ontouchstart' in window && !('onmousemove' in window);
-    if (isTouch) {
-      if (cursorRootRef.current) cursorRootRef.current.style.display = 'none';
-      return;
-    }
+    const handleResize = () => {
+      setIsMobile(checkIsMobileOrTouch());
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
 
     const p = physicsRef.current;
 

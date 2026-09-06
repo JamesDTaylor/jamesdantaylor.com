@@ -63,5 +63,5 @@ Whether you're an academic researcher exploring VR paradigms, a clinician lookin
 
 * 📬 **Email**: [james.dan.taylor@gmail.com](mailto:james.dan.taylor@gmail.com)
 * 💼 **LinkedIn**: [linkedin.com/in/jamesdantaylor](https://www.linkedin.com/in/jamesdantaylor)
-* 📍 **Based in**: Gauteng, South Africa
+* 📍 **Based in**: Gauteng and Western Cape, South Africa
 * 🏛️ **Affiliation**: Department of Psychiatry, Faculty of Medicine and Health Sciences, Stellenbosch University

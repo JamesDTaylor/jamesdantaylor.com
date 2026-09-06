@@ -28,9 +28,9 @@ Here is how the narrative chapters unfold:
 
 * **Chapter I · Summary & Manifesto**: An illuminated parchment dossier outlining my research ethos, bridging psychiatric research, behavioral science, and purposeful technology.
 * **Chapter II · Chronicle of Experience**: A grounded look at my professional journey. Before diving deep into academic psychiatry, I spent years wrangling data pipelines, architecting cloud solutions on GCP, running analytics, and coaching individuals navigating careers with chronic illness.
-* **Chapter III · The Signpost (Education & Background)**: An interactive signpost (complete with wind-deflecting canopy foliage) tracing my academic path — from cognitive neuroscience and psychology at the University of the Witwatersrand to ongoing psychiatric research at Stellenbosch University.
-* **Chapter IV · Collaborate (The Interactive Brief)**: Rather than an impersonal contact form, this is a guided 7-stage conversation. It asks real questions about product concept, patient cohorts, clinical promise, and desired outcomes. Visitors can attach documents and compile a clean project brief ready to export or print.
-* **Chapter V · The Dispatch (Contact)**: Direct lines to reach me, grab my email in one click, or connect on LinkedIn.
+* **Chapter III · The Signpost (Education & Background)**: An interactive signpost (complete with wind-deflecting canopy foliage) tracing my academic path, from cognitive neuroscience and psychology at the University of the Witwatersrand to ongoing neuroscience research at Stellenbosch University.
+* **Chapter IV · Collaborate (The Interactive Brief)**: Rather than an impersonal contact form, this is a guided 7-stage conversation. It asks real questions about product concept and desired outcomes. Visitors can attach documents and compile a clean project brief ready to export or print.
+* **Chapter V · The Dispatch (Contact)**: Direct lines to reach me or connect on LinkedIn.
 
 ---
 
